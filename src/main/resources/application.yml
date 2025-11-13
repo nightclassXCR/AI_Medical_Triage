@@ -1,0 +1,23 @@
+# Application Name (Common to All Environments)
+spring:
+  application:
+    name: AI_Medical_Triage
+  # The active environment (switched using this parameter: dev/test/prod, etc.)
+  profiles:
+    active: dev
+  # General Framework Configuration (Shared by All Environments)
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+# MyBatis General Configuration (Basic Configuration Shared Across All Environments)
+mybatis-plus:
+  type-aliases-package: com.dd.ai_medical_triage.entity
+  type-handlers-package: com.dd.ai_medical_triage.handler
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: true
+
+# Default port (can be overridden by environment configuration)
+server:
+  port: 8085

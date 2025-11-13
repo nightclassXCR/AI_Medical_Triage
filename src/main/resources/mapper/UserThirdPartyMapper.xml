@@ -3,7 +3,7 @@
 <mapper namespace="com.dd.ai_medical_triage.mapper.UserThirdPartyMapper">
 
     <!-- 结果集映射：严格匹配user_third_party表字段与UserThirdParty实体 -->
-    <resultMap id="BaseResultMap" type="com.dd.ai_medical_triage..entity.UserThirdParty">
+    <resultMap id="BaseResultMap" type="com.dd.ai_medical_triage.entity.UserThirdParty">
         <id column="id" property="id"/>
         <result column="user_id" property="userId"/>
         <result column="openid" property="openid"/>

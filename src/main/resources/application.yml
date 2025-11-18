@@ -18,10 +18,17 @@ spring:
           model: "qwen3-max"                # 默认模型
           temperature: 0.7                  # 生成文本的随机性控制
           max-tokens: 500
-
-
-
-
+  rabbitmq:
+    host: { your——server }
+    port: 5672
+    username: {your_name}
+    password: {your_password}
+    virtual-host: /ai_medical_triage
+    # 其他可选配置
+    listener:
+      simple:
+        concurrency: 5
+        max-concurrency: 10
 
 # MyBatis General Configuration (Basic Configuration Shared Across All Environments)
 mybatis-plus:

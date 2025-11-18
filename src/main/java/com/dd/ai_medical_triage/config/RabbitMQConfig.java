@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
 
+    public static final String REGISTER_QUEUE = "register.queue";
+    public static final String SUMMARY_QUEUE = "ai_summary.queue";
+
     // TODO: 添加RabbitMQ配置
     @RabbitListener(queues = "queue.name")
     public void receiveMessage(String message) {

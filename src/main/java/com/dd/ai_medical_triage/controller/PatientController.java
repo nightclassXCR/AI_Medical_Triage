@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.Controller;
+package com.dd.ai_medical_triage.controller;
 
 
 import org.springframework.web.bind.annotation.RestController;

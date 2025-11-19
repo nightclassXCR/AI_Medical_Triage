@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.Entity;
+package com.dd.ai_medical_triage.entity;
 
 
 import lombok.AllArgsConstructor;
@@ -6,7 +6,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+/**
+ * 医疗记录实体类
+ * 对应数据库表：medical_record
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

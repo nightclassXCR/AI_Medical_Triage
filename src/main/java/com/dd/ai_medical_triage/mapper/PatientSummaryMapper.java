@@ -1,10 +1,9 @@
 package com.dd.ai_medical_triage.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.dd.ai_medical_triage.entity.Patient;
+import com.dd.ai_medical_triage.entity.PatientSummary;
 import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
-public interface PatientMapper extends BaseMapper<Patient> {
-
+public interface PatientSummaryMapper extends BaseMapper<PatientSummary> {
 }

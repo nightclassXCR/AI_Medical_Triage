@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.Entity;
+package com.dd.ai_medical_triage.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

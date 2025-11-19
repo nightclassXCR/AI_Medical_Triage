@@ -1,9 +1,12 @@
-package com.dd.ai_medical_triage.Entity;
+package com.dd.ai_medical_triage.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
+/**
+ * 医生实体类
+ * 对应数据库表：doctor
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

@@ -1,7 +1,7 @@
 package com.dd.ai_medical_triage.service.base;
 
 
-import com.dd.ai_medical_triage.Entity.Doctor;
+import com.dd.ai_medical_triage.entity.Doctor;
 import org.springframework.stereotype.Service;
 
 @Service

@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.Entity;
+package com.dd.ai_medical_triage.entity;
 
 
 import com.dd.ai_medical_triage.enums.SimpleEnum.GenderEnum;
@@ -8,6 +8,11 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+/**
+ * 患者信息实体类
+ * 对应数据库表：patient
+ * 患者信息
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

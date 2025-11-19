@@ -16,7 +16,7 @@ spring:
       chat:
         options:
           model: "qwen3-max"                # 默认模型
-          temperature: 0.7                  # 生成文本的随机性控制
+          temperature: 0.5                  # 生成文本的随机性控制
           max-tokens: 500
   rabbitmq:
     host: { your——server }

@@ -26,20 +26,4 @@ public class MedicalTools {
         // tODO 查询当前科室医生的出诊情况
         return "出诊情况";
     }
-
-    @Tool(description = "查询患者所需要挂号的对应时间")
-    public String queryTime(String patientName) {
-
-        // tODO 查询患者所需要挂号的对应时间
-        return "时间";
-    }
-
-    @Tool(description = "查询患者所需要挂号的对应费用")
-    public String queryCost(String patientName) {
-
-        // tODO 查询患者所需要挂号的对应费用
-        return "费用";
-    }
-
-
 }

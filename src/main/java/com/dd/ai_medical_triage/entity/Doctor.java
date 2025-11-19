@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Doctor {
+    private Long userId;
     private int doctorId;
     private String name;
     private String department;

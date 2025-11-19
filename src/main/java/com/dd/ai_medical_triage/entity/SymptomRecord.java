@@ -5,7 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-
+/**
+ * 症状记录实体类
+ * 对应数据库表：symptom_record
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

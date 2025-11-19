@@ -1,6 +1,9 @@
 package com.dd.ai_medical_triage.entity;
 
 
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.dd.ai_medical_triage.enums.SimpleEnum.GenderEnum;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,9 +19,13 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@TableName("patient")
 public class Patient {
 
+    @TableId(type = IdType.AUTO)
     private int id;
+
+    private Long userId;
 
     private String name;
 
@@ -35,6 +42,8 @@ public class Patient {
     private String weight;
 
     private String caseNumber;
+
+
 
     private LocalDateTime createTime;
 

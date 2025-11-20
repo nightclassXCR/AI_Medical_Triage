@@ -11,7 +11,7 @@ spring:
     allow-bean-definition-overriding: true
   ai:
     openai:
-      api-key: {api key}
+      api-key: ${api key}
       base-url: https://dashscope.aliyuncs.com/compatible-mode/v1
       chat:
         options:
@@ -19,16 +19,28 @@ spring:
           temperature: 0.5                  # 生成文本的随机性控制
           max-tokens: 500
   rabbitmq:
-    host: { your——server }
+    host: ${ your_server }
     port: 5672
-    username: {your_name}
-    password: {your_password}
+    username: ${your_name}
+    password: ${your_password}
     virtual-host: /ai_medical_triage
     # 其他可选配置
     listener:
       simple:
         concurrency: 5
         max-concurrency: 10
+
+  datasource:
+    url: jdbc:mysql://{your_server}/ai_medical_triage?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Shanghai
+    username: ${ your_name }
+    password: ${ your_password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  data:
+    redis:
+      host: ${your_server}
+      port: 6379
+      password: ${your_password}
 
 # MyBatis General Configuration (Basic Configuration Shared Across All Environments)
 mybatis-plus:

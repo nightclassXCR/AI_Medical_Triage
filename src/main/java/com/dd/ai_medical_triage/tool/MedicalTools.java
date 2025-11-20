@@ -36,7 +36,6 @@ public class MedicalTools {
     @Tool(description = "查询当前科室医生的出诊情况")
     public ResultVO queryDoctorSchedule(@ToolParam(description = "科室名称")String departmentName) {
 
-        // tODO 查询当前科室医生的出诊情况
         return ResultVO.success(doctorService.queryDoctorStatusByDepartmentName(departmentName));
 
 

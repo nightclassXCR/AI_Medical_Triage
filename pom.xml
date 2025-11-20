@@ -303,6 +303,37 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- 阿里云SDK基础依赖（阿里云为所有云产品（如号码认证、OSS、短信服务等）提供的 统一 API 调用框架） -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea-openapi</artifactId>
+            <version>0.2.7</version>
+        </dependency>
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>tea-util</artifactId>
+            <version>0.2.14</version>
+        </dependency>
+
+        <!-- 阿里云号码认证服务SDK -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dypnsapi20170525</artifactId>
+            <version>2.0.0</version> <!-- 建议使用 Maven 仓库最新版本，如 1.1.1 或更高 -->
+        </dependency>
+
+        <!-- mail -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+
+        <!-- 用于生成 HTML 格式邮件内容（可选，提升用户体验） -->
+        <dependency>
+            <groupId>org.thymeleaf</groupId>
+            <artifactId>thymeleaf-spring6</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

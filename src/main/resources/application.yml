@@ -1,14 +1,32 @@
-# Application Name (Common to All Environments)
+# 默认端口
+server:
+  port: 8085
+
+# 应用程序名称
 spring:
   application:
     name: AI_Medical_Triage
-  # The active environment (switched using this parameter: dev/test/prod, etc.)
+  # 使用的环境（dev, test, prod)
   profiles:
     active: dev
-  # General Framework Configuration (Shared by All Environments)
+  # 全局框架配置
   main:
     allow-circular-references: true
     allow-bean-definition-overriding: true
+  # 邮件配置
+  mail:
+    host: smtp.qq.com  # SMTP服务器地址（QQ邮箱：smtp.qq.com；网易163：smtp.163.com）
+    port: 465          # SSL加密端口（非SSL端口25，推荐用465更安全）
+    protocol: smtp     # 邮件协议
+    properties:
+      mail:
+        smtp:
+          auth: true   # 开启SMTP认证
+          ssl:
+            enable: true  # 开启SSL加密
+            required: true # 强制使用SSL
+        debug: false   # 关闭调试模式（生产环境设为false，避免日志打印邮件内容）
+  # AI配置
   ai:
     openai:
       api-key: {api key}
@@ -30,7 +48,7 @@ spring:
         concurrency: 5
         max-concurrency: 10
 
-# MyBatis General Configuration (Basic Configuration Shared Across All Environments)
+# MyBatis 全局配置
 mybatis-plus:
   type-aliases-package: com.dd.ai_medical_triage.entity
   type-handlers-package: com.dd.ai_medical_triage.handler
@@ -38,9 +56,12 @@ mybatis-plus:
     map-underscore-to-camel-case: true
     cache-enabled: true
 
-# Default port (can be overridden by environment configuration)
-server:
-  port: 8085
+# 自定义邮箱验证码配置
+email:
+  code:
+    expire-seconds: 300  # 验证码有效期：5分钟（与短信验证码一致）
+    subject: "【graygoo401】您的邮箱验证码"  # 邮件主题
+    template: "email/code-template.html"  # HTML邮件模板路径（放在resources/templates下）
 
 # 日志配置
 logging:

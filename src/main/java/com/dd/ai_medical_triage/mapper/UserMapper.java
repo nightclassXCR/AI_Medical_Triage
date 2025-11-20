@@ -52,7 +52,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param email 用户邮箱
      * @return 用户实体
      */
-    User selectByEmail(@Param("templates/email") String email);
+    User selectByEmail(@Param("email") String email);
 
 
     // ==================== 信用分与统计 ====================

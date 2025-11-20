@@ -52,7 +52,7 @@ public interface UserMapper extends BaseMapper<User> {
      * @param email 用户邮箱
      * @return 用户实体
      */
-    User selectByEmail(@Param("email") String email);
+    User selectByEmail(@Param("templates/email") String email);
 
 
     // ==================== 信用分与统计 ====================
@@ -65,6 +65,24 @@ public interface UserMapper extends BaseMapper<User> {
      */
     @Update("UPDATE `user` SET password = #{newPassword} WHERE user_id = #{userId}")
     int updatePassword(@Param("userId") Long userId, @Param("newPassword") String newPassword);
+
+    /**
+     * 绑定邮箱
+     * @param userId 用户ID
+     * @param email 邮箱
+     * @return 影响行数
+     */
+    @Update("UPDATE `user` SET email = #{email} WHERE user_id = #{userId}")
+    int updateEmail(@Param("userId") Long userId, @Param("email") String email);
+
+    /**
+     * 绑定手机号
+     * @param userId 用户ID
+     * @param phoneNumber 手机号
+     * @return 影响行数
+     */
+    @Update("UPDATE `user` SET phone_number = #{phoneNumber} WHERE user_id = #{userId}")
+    int updatePhoneNumber(@Param("userId") Long userId, @Param("phoneNumber") String phoneNumber);
 
     /**
      * 更新用户状态

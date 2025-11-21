@@ -4,6 +4,7 @@ package com.dd.ai_medical_triage.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dd.ai_medical_triage.annatation.NoRepeatSubmit;
 import com.dd.ai_medical_triage.config.RabbitMQConfig;
+import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.exception.BusinessException;
 import com.dd.ai_medical_triage.mapper.AppointmentMapper;
@@ -43,7 +44,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
     @Override
     @NoRepeatSubmit(key = "'lock:reg:' + #req.patientId + ':' + #req.doctorId", lockTime = 10)
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO register(Appointment req){
+    public ResultVO register(AppointmentRequestDTO req){
         LambdaQueryWrapper<Appointment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Appointment::getPatientId, req.getPatientId())
                 .eq(Appointment::getDoctorId, req.getDoctorId())

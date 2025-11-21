@@ -82,7 +82,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
 
             rabbitTemplate.convertAndSend(
                     RabbitMQConfig.EXCHANGE,
-                    RabbitMQConfig.ROUTING_KEY_SUMMARY,
+                    RabbitMQConfig.ROUTING_KEY_REGISTER,
                     appointment
             );
 

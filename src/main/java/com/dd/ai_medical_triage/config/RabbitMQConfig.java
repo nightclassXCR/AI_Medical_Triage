@@ -20,9 +20,7 @@ public class RabbitMQConfig {
     public static final String SUMMARY_QUEUE = "ai_summary.queue";
 
 
-
-    // TODO: 添加RabbitMQ配置
-    @RabbitListener(queues = SUMMARY_QUEUE)
+    @RabbitListener(queues = REGISTER_QUEUE)
     public void receiveMessage(String message) {
         System.out.println("Received message: " + message);
     }
@@ -40,7 +38,7 @@ public class RabbitMQConfig {
     @Bean
     public Queue appointmentQueue() {
         return QueueBuilder
-                .durable(SUMMARY_QUEUE)
+                .durable(REGISTER_QUEUE)
                 .build();
     }
 
@@ -49,7 +47,7 @@ public class RabbitMQConfig {
         return BindingBuilder
                 .bind(appointmentQueue())
                 .to(appointmentExchange())
-                .with(ROUTING_KEY_SUMMARY);
+                .with(ROUTING_KEY_REGISTER);
     }
 
 

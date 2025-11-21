@@ -16,7 +16,7 @@ public class SymptomExtractTool {
     private SymptomRecordService symptomRecordService;
 
     @Tool(description = "记录患者的症状")
-    public ResultVO extractSymptoms(@ToolParam(description = "患者病历号") int caseNumber,
+    public ResultVO extractSymptoms(@ToolParam(description = "患者病历号") Long caseNumber,
                                     @ToolParam(description = "患者症状") String symptoms,
                                     @ToolParam(description = "症状的程度") String severity,
                                     @ToolParam(description = "持续时间") String duration) {

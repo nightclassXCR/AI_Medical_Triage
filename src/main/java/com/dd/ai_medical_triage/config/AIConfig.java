@@ -2,6 +2,7 @@ package com.dd.ai_medical_triage.config;
 
 import com.dd.ai_medical_triage.tool.MedicalTools;
 import com.dd.ai_medical_triage.tool.PatientTools;
+import com.dd.ai_medical_triage.tool.RegisterTools;
 import com.dd.ai_medical_triage.tool.SymptomExtractTool;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
@@ -30,7 +31,7 @@ public class AIConfig {
                 .defaultSystem(SAFETY_BOUNDARIES)
                 .defaultSystem(INTERACTION_RULES)
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
-                .defaultTools(new PatientTools(), new MedicalTools(), new SymptomExtractTool())
+                .defaultTools(new PatientTools(), new MedicalTools(), new SymptomExtractTool(),new RegisterTools())
                 .build();
 
     }

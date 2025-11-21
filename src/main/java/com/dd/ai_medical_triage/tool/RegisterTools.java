@@ -1,12 +1,11 @@
 package com.dd.ai_medical_triage.tool;
 
 
-import com.dd.ai_medical_triage.dto.request.RegisterAppointmentRequest;
+
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.vo.ResultVO;
 import org.springframework.ai.tool.annotation.Tool;
-import org.springframework.ai.tool.annotation.ToolParam;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

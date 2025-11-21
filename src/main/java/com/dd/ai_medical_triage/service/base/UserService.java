@@ -2,6 +2,8 @@ package com.dd.ai_medical_triage.service.base;
 
 import com.dd.ai_medical_triage.dto.PageResult;
 import com.dd.ai_medical_triage.dto.user.*;
+import com.dd.ai_medical_triage.dto.verification.VerifyEmailDTO;
+import com.dd.ai_medical_triage.dto.verification.VerifyPhoneDTO;
 import com.dd.ai_medical_triage.entity.User;
 import com.dd.ai_medical_triage.enums.SimpleEnum.UserRoleEnum;
 import com.dd.ai_medical_triage.enums.SimpleEnum.UserStatusEnum;
@@ -23,6 +25,48 @@ public interface UserService extends BaseService<User>{
      * @return true成功/false失败）
      */
     Boolean register(RegisterDTO registerDTO);
+
+    /**
+     * 用户邮箱注册（含验证码校验）
+     * @param registerEmailDTO 注册请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean registerByEmail(RegisterEmailDTO registerEmailDTO);
+
+    /**
+     * 用户手机号注册（含验证码校验）
+     * @param registerPhoneDTO 注册请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean registerByPhone(RegisterPhoneDTO registerPhoneDTO);
+
+    /**
+     * 绑定邮箱（含验证码校验）
+     * @param verifyDTO 绑定邮箱请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean bindEmail(VerifyEmailDTO verifyDTO);
+
+    /**
+     * 绑定手机号（含验证码校验）
+     * @param verifyDTO 绑定手机号请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean bindPhone(VerifyPhoneDTO verifyDTO);
+
+    /**
+     * 忘记密码后重置密码（手机号）
+     * @param verifyDTO 忘记密码请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean updatePasswordByEmail(PasswordUpdateEmailDTO verifyDTO);
+
+    /**
+     * 忘记密码后重置密码（邮箱）
+     * @param verifyDTO 忘记密码请求参数DTO
+     * @return true成功/false失败）
+     */
+    Boolean updatePasswordByPhone(PasswordUpdatePhoneDTO verifyDTO);
 
     /**
      * 用户登录（支持账号密码/手机号验证码登录）
@@ -103,7 +147,7 @@ public interface UserService extends BaseService<User>{
     /**
      * 验证用户角色（业务方法）
      * @param userId 用户ID
-     * @param role 角色枚举
+     * @param role 目标角色枚举
      * @return 验证结果（true/false）
      */
     Boolean verifyRole(Long userId, UserRoleEnum role);

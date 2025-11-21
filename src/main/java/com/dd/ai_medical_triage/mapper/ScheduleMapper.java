@@ -18,5 +18,5 @@ public interface ScheduleMapper extends BaseMapper<Schedule> {
      * @return 影响行数 (1表示扣减成功，0表示扣减失败即无号)
      */
     @Update("UPDATE doctor_schedule SET sold_count = sold_count + 1 WHERE id = #{id} AND sold_count < total_quota")
-    int deductStock(@Param("id") int id);
+    int deductStock(@Param("id") Long id);
 }

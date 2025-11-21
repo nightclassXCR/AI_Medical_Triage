@@ -8,5 +8,8 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AppointmentService extends BaseService<Appointment>{
 
-    public ResultVO regiester(Appointment appointment);
+    public ResultVO register(Appointment appointment);
+
+
+
 }

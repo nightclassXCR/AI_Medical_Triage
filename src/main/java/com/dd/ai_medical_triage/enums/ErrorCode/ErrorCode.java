@@ -77,6 +77,9 @@ public enum ErrorCode {
     RECEIVER_NOT_EXISTS("MSG_011", 404, "接收者不存在"),
     SENDER_NOT_EXISTS("MSG_012", 404, "发送者不存在"),
 
+    AI_TIP_DUPLICATE_REGISTRATION("AI_001", 409, "AI提示：检测到重复挂号，请核实您的订单。"),
+    AI_TIP_NO_ENOUGH_DOCTOR("AI_002", 409, "AI提示：抱歉，该医生的号源已售罄。"),
+    AI_TIP_NOT_ALLOWED("AI_003", 404, "AI提示：您已经预约过该医生当天的号了，无需重复预约。"),
 
     MESSAGE_STATUS_TRANSITION_INVALID("MSG_004", 400, "消息状态转换错误"),
 

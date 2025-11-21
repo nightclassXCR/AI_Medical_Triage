@@ -112,7 +112,12 @@ public enum ErrorCode {
     VERIFY_CODE_NOT_MATCH("VERIFY_006", 400, "验证码不匹配"),
 
     EMAIL_NOT_BELONG_TO_USER("VERIFY_051", 400, "邮箱不属于当前用户"),
-    PHONE_NOT_BELONG_TO_USER("VERIFY_052", 400, "手机号不属于当前用户");
+    PHONE_NOT_BELONG_TO_USER("VERIFY_052", 400, "手机号不属于当前用户"),
+
+    // AI 模块
+    AI_SERVICE_FAILS("AI_001", 500, "AI服务不可用"),
+    AI_PARSE_FAILS("AI_002", 500, "AI服务前置解析失败"),
+    AI_CLEAR_CHAT_CONTENT_FAILS("AI_003", 500, "AI清理上下文"),;
 
     // HTTP状态码
     // 200：成功操作

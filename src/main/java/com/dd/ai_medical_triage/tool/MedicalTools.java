@@ -38,6 +38,20 @@ public class MedicalTools {
 
         return ResultVO.success(doctorService.queryDoctorStatusByDepartmentName(departmentName));
 
+    }
+
+    @Tool(description = "根据医生id查挂号情况")
+    public ResultVO queryDoctorScheduleById(@ToolParam(description = "医生id")int id) {
+
+        return ResultVO.success(doctorService.queryAppointmentByDoctorId(id));
 
     }
+
+    @Tool(description = "根据医生id查姓名")
+    public ResultVO queryDoctorNameById(@ToolParam(description = "医生id")int id) {
+
+        return ResultVO.success(doctorService.queryDoctorNameById(id));
+
+    }
+
 }

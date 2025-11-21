@@ -3,18 +3,23 @@ package com.dd.ai_medical_triage.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dd.ai_medical_triage.annatation.NoRepeatSubmit;
+import com.dd.ai_medical_triage.config.RabbitMQConfig;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.exception.BusinessException;
 import com.dd.ai_medical_triage.mapper.AppointmentMapper;
 import com.dd.ai_medical_triage.mapper.ScheduleMapper;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.vo.ResultVO;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.Duration;
+import java.util.UUID;
 
 import static com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode.*;
 
@@ -23,6 +28,12 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
 
     @Autowired
     private ScheduleMapper scheduleMapper;
+
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private StringRedisTemplate redis;
 
     /**
      * 供 Spring AI 调用的方法
@@ -67,6 +78,19 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
             throw new BusinessException(AI_TIP_DUPLICATE_REGISTRATION);
         }
 
+
+            rabbitTemplate.convertAndSend(
+                    RabbitMQConfig.EXCHANGE,
+                    RabbitMQConfig.ROUTING_KEY_SUMMARY,
+                    appointment
+            );
+
+
         return ResultVO.success("挂号锁定成功！请提示用户尽快支付。订单ID：" + appointment.getAppointmentId());
     }
+
+
+
+
+
 }

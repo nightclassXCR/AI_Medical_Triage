@@ -1,6 +1,7 @@
 package com.dd.ai_medical_triage.service.impl;
 
 
+import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.entity.Doctor;
 import com.dd.ai_medical_triage.mapper.DepartmentMapper;
 import com.dd.ai_medical_triage.mapper.DoctorMapper;
@@ -32,4 +33,19 @@ public class DoctorServiceImpl extends BaseServiceImpl<DoctorMapper, Doctor> imp
         int id= departmentMapper.getIdByName(departmentName);
         return doctorMapper.queryDoctorStatusByDepartmentId(id);
     }
+
+    @Override
+    public List<Appointment> queryAppointmentByDoctorId(int id) {
+        List<Appointment> appointments=doctorMapper.queryAppointmentByDoctorId(id);
+        return appointments;
+    }
+
+    @Override
+    public String queryDoctorNameById(int id) {
+        String name=doctorMapper.queryDoctorNameById(id);
+        return name;
+    }
+
+
+
 }

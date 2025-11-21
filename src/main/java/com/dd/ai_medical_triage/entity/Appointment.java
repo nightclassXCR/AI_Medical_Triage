@@ -1,5 +1,7 @@
 package com.dd.ai_medical_triage.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
+import com.baomidou.mybatisplus.annotation.TableField;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,6 +19,10 @@ public class Appointment {
     private int appointmentId;
     private int patientId;
     private int doctorId;
+    private int scheduleId;
     private LocalDateTime appointmentTime;
-    private String status;
+    // 状态: 0-待支付, 1-成功, 2-取消
+    private Integer status;
+
+
 }

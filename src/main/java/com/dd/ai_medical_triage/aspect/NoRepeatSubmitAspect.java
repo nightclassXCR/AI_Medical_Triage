@@ -10,6 +10,7 @@ import org.redisson.api.RLock;
 import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.core.annotation.Order;
 import org.springframework.expression.EvaluationContext;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 @Aspect
 @Component
+@Order(1)
 public class NoRepeatSubmitAspect {
 
     @Autowired
@@ -47,6 +49,7 @@ public class NoRepeatSubmitAspect {
             if (!isLocked) {
                 // 4. 加锁失败，直接抛出异常，阻断业务执行
                 // 建议抛出自定义异常，由全局异常处理器捕获并返回前端 JSON
+                // todo 自定义异常,哪个是自定义业务异常
                 throw new RuntimeException(noRepeatSubmit.message());
             }
 

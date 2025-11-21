@@ -67,6 +67,24 @@ public interface UserMapper extends BaseMapper<User> {
     int updatePassword(@Param("userId") Long userId, @Param("newPassword") String newPassword);
 
     /**
+     * 绑定邮箱
+     * @param userId 用户ID
+     * @param email 邮箱
+     * @return 影响行数
+     */
+    @Update("UPDATE `user` SET email = #{email} WHERE user_id = #{userId}")
+    int updateEmail(@Param("userId") Long userId, @Param("email") String email);
+
+    /**
+     * 绑定手机号
+     * @param userId 用户ID
+     * @param phoneNumber 手机号
+     * @return 影响行数
+     */
+    @Update("UPDATE `user` SET phone_number = #{phoneNumber} WHERE user_id = #{userId}")
+    int updatePhoneNumber(@Param("userId") Long userId, @Param("phoneNumber") String phoneNumber);
+
+    /**
      * 更新用户状态
      * @param userID 用户ID
      * @param status 状态枚举（NORMAL/BANNED）

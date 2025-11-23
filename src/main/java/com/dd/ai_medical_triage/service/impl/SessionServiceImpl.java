@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dd.ai_medical_triage.utils.RedisConstants.SESSION_KEY;
+import static com.dd.ai_medical_triage.utils.constants.RedisConstants.SESSION_KEY;
 
 @Service
 public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, Session> implements SessionService {

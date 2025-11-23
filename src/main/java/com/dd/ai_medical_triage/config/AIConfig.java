@@ -11,7 +11,7 @@ import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static com.dd.ai_medical_triage.utils.AIConstants.*;
+import static com.dd.ai_medical_triage.utils.constants.AIConstants.*;
 
 /**
  * AI 客户端配置

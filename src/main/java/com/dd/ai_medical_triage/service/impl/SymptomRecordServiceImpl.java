@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static com.dd.ai_medical_triage.utils.RedisConstants.SYMPTOM_KEY;
+import static com.dd.ai_medical_triage.utils.constants.RedisConstants.SYMPTOM_KEY;
 
 @Service
 public class SymptomRecordServiceImpl extends BaseServiceImpl<SymptomRecordMapper, SymptomRecord> implements SymptomRecordService {

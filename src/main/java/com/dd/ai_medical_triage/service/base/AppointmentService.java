@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface AppointmentService extends BaseService<Appointment>{
 
-    public ResultVO register(Appointment appointment);
+    public Long register(Appointment appointment);
 
 
 

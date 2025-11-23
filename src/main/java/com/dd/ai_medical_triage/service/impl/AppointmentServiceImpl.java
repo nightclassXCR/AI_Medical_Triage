@@ -32,7 +32,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
     @Override
     @NoRepeatSubmit(key = "'lock:reg:' + #req.patientId + ':' + #req.doctorId", lockTime = 10)
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO register(Appointment req){
+    public Long register(Appointment req){
         LambdaQueryWrapper<Appointment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Appointment::getPatientId, req.getPatientId())
                 .eq(Appointment::getDoctorId, req.getDoctorId())
@@ -67,6 +67,6 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
             throw new BusinessException(AI_TIP_DUPLICATE_REGISTRATION);
         }
 
-        return ResultVO.success("挂号锁定成功！请提示用户尽快支付。订单ID：" + appointment.getAppointmentId());
+        return appointment.getAppointmentId();
     }
 }

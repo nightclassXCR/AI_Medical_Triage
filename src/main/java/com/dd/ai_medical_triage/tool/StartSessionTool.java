@@ -17,8 +17,12 @@ public class StartSessionTool {
     @Autowired
     private SessionService sessionService;
 
+    /**
+     * 开始新的AI问诊会话
+     * @return 会话ID
+     */
     @Tool(description = "开始新的AI问诊会话")
-    public ResultVO startSession() {
+    public ResultVO<Boolean> startSession() {
         Session session = new Session();
         session.setPatientId(1L);
         session.setStatus(SessionStatusEnum.started);

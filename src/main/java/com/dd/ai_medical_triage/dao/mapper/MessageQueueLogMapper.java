@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.mapper;
+package com.dd.ai_medical_triage.dao.mapper;
 
 
 import com.dd.ai_medical_triage.entity.MessageQueueLog;

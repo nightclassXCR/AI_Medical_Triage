@@ -1,6 +1,7 @@
 package com.dd.ai_medical_triage.mapper;
 
 import com.baomidou.mybatisplus.test.autoconfigure.MybatisPlusTest;
+import com.dd.ai_medical_triage.dao.mapper.UserMapper;
 import com.dd.ai_medical_triage.dto.user.UserQueryDTO;
 import com.dd.ai_medical_triage.entity.User;
 import com.dd.ai_medical_triage.enums.SimpleEnum.GenderEnum;

@@ -1,7 +1,7 @@
 package com.dd.ai_medical_triage.utils;
 
 import com.dd.ai_medical_triage.entity.User;
-import com.dd.ai_medical_triage.mapper.UserMapper;
+import com.dd.ai_medical_triage.dao.mapper.UserMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;

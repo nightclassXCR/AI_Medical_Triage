@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.utils;
+package com.dd.ai_medical_triage.utils.constants;
 
 public class AIConstants {
 

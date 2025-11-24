@@ -1,7 +1,7 @@
 package com.dd.ai_medical_triage.service.impl;
 
 import com.dd.ai_medical_triage.entity.Session;
-import com.dd.ai_medical_triage.mapper.SessionMapper;
+import com.dd.ai_medical_triage.dao.mapper.SessionMapper;
 import com.dd.ai_medical_triage.service.base.SessionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -11,7 +11,7 @@ import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.dd.ai_medical_triage.utils.RedisConstants.SESSION_KEY;
+import static com.dd.ai_medical_triage.utils.constants.RedisConstants.SESSION_KEY;
 
 @Service
 public class SessionServiceImpl extends BaseServiceImpl<SessionMapper, Session> implements SessionService {

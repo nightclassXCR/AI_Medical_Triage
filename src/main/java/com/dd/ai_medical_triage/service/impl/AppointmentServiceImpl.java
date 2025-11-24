@@ -5,10 +5,9 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dd.ai_medical_triage.annatation.NoRepeatSubmit;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.exception.BusinessException;
-import com.dd.ai_medical_triage.mapper.AppointmentMapper;
-import com.dd.ai_medical_triage.mapper.ScheduleMapper;
+import com.dd.ai_medical_triage.dao.mapper.AppointmentMapper;
+import com.dd.ai_medical_triage.dao.mapper.ScheduleMapper;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
-import com.dd.ai_medical_triage.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
@@ -32,7 +31,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
     @Override
     @NoRepeatSubmit(key = "'lock:reg:' + #req.patientId + ':' + #req.doctorId", lockTime = 10)
     @Transactional(rollbackFor = Exception.class)
-    public ResultVO register(Appointment req){
+    public Long register(Appointment req){
         LambdaQueryWrapper<Appointment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Appointment::getPatientId, req.getPatientId())
                 .eq(Appointment::getDoctorId, req.getDoctorId())
@@ -67,6 +66,6 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
             throw new BusinessException(AI_TIP_DUPLICATE_REGISTRATION);
         }
 
-        return ResultVO.success("挂号锁定成功！请提示用户尽快支付。订单ID：" + appointment.getAppointmentId());
+        return appointment.getAppointmentId();
     }
 }

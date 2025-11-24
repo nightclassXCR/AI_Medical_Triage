@@ -19,9 +19,21 @@ public class PatientTools {
     @Autowired
     private PatientService patientService;
 
-
+    /**
+     * 记录患者的个人信息
+     *
+     * @param patientName  患者姓名
+     * @param age          患者年龄
+     * @param gender       患者性别
+     * @param phoneNumber  患者电话号码
+     * @param idCard       患者身份证号
+     * @param height       患者身高
+     * @param weight       患者体重
+     * @param caseNumber   患者病历号
+     * @return 患者信息
+     */
     @Tool(description = "记录患者的个人信息")
-    public ResultVO recordPatientInfo(@ToolParam(description = "患者姓名") String patientName,
+    public ResultVO<?> recordPatientInfo(@ToolParam(description = "患者姓名") String patientName,
                                       @ToolParam(description = "患者年龄") String age,
                                       @ToolParam (description = "患者性别") String gender,
                                       @ToolParam (description = "患者电话号码") String phoneNumber,

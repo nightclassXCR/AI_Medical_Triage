@@ -3,17 +3,29 @@ package com.dd.ai_medical_triage.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dd.ai_medical_triage.annatation.NoRepeatSubmit;
+import com.dd.ai_medical_triage.config.RabbitMQConfig;
+import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
+import com.dd.ai_medical_triage.entity.MessageQueueLog;
 import com.dd.ai_medical_triage.exception.BusinessException;
-import com.dd.ai_medical_triage.dao.mapper.AppointmentMapper;
-import com.dd.ai_medical_triage.dao.mapper.ScheduleMapper;
+import com.dd.ai_medical_triage.mapper.AppointmentMapper;
+import com.dd.ai_medical_triage.mapper.MessageQueueLogMapper;
+import com.dd.ai_medical_triage.mapper.ScheduleMapper;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
+import com.dd.ai_medical_triage.service.base.MessageQueueLogService;
+import com.dd.ai_medical_triage.vo.ResultVO;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.UUID;
 
 import static com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode.*;
 
@@ -23,6 +35,17 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
     @Autowired
     private ScheduleMapper scheduleMapper;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private MessageQueueLogService messageQueueLogService;
+
+    @Autowired
+    private StringRedisTemplate redis;
+    @Autowired
+    private MessageQueueLogMapper messageQueueLogMapper;
+
     /**
      * 供 Spring AI 调用的方法
      * 1. @NoRepeatSubmit: Redis 分布式锁 (防止瞬间重复点击)
@@ -31,7 +54,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
     @Override
     @NoRepeatSubmit(key = "'lock:reg:' + #req.patientId + ':' + #req.doctorId", lockTime = 10)
     @Transactional(rollbackFor = Exception.class)
-    public Long register(Appointment req){
+    public ResultVO register(AppointmentRequestDTO req){
         LambdaQueryWrapper<Appointment> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.eq(Appointment::getPatientId, req.getPatientId())
                 .eq(Appointment::getDoctorId, req.getDoctorId())
@@ -54,7 +77,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
         appointment.setPatientId(req.getPatientId());
         appointment.setDoctorId(req.getDoctorId());
         appointment.setScheduleId(req.getScheduleId());
-        appointment.setAppointmentTime(req.getAppointmentTime());
+        appointment.setAppointmentTime(LocalDateTime.parse(req.getAppointmentTime()));
         appointment.setStatus(0); // 初始状态：待支付
 
         try {
@@ -66,6 +89,29 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
             throw new BusinessException(AI_TIP_DUPLICATE_REGISTRATION);
         }
 
-        return appointment.getAppointmentId();
+
+        rabbitTemplate.convertAndSend(
+                RabbitMQConfig.EXCHANGE,
+                RabbitMQConfig.ROUTING_KEY_REGISTER,
+                appointment
+        );
+
+        MessageQueueLog messageQueueLog = new MessageQueueLog();
+        messageQueueLog.setEventType("register");
+        messageQueueLog.setPayload(appointment.toString());
+        messageQueueLog.setStatus("pending");
+        messageQueueLog.setCreatedTime(LocalDateTime.now());
+
+
+        messageQueueLogService.insert(messageQueueLog);
+
+
+
+        return ResultVO.success("挂号锁定成功！请提示用户尽快支付。订单ID：" + appointment.getAppointmentId());
     }
+
+
+
+
+
 }

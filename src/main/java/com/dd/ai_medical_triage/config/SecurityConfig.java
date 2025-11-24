@@ -2,8 +2,10 @@ package com.dd.ai_medical_triage.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 //@EnableWebSecurity
@@ -23,29 +25,29 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder(12);
     }
 
-//    /**
-//     * 配置安全过滤链
-//     * 仅负责基础安全配置，将认证逻辑完全交给自定义拦截器
-//     * @param http HttpSecurity对象
-//     * @return SecurityFilterChain对象
-//     * @throws Exception 异常
-//     */
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//        http
-//                // 1. 关闭 CSRF（开发环境）
-//                .csrf(csrf -> csrf.disable())
-//                // 2. 配置请求权限
-//                .authorizeHttpRequests(auth -> auth
-//                        // 放行所有请求，由AuthInterceptor处理权限校验
-//                        .anyRequest().permitAll()
-//                )
-//                // 3. 保留表单登录（可选，不影响 Swagger 访问）
-//                .formLogin(form -> form.permitAll())
-//                // 4. 关键：排除 SpringDoc 接口的 Security 过滤器（避免拦截）
-//                .securityMatcher("/api/**") // 仅对 /api/** 路径应用 Security 规则
-//                .httpBasic(httpBasic -> {});
-//
-//        return http.build();
-//    }
+    /**
+     * 配置安全过滤链
+     * 仅负责基础安全配置，将认证逻辑完全交给自定义拦截器
+     * @param http HttpSecurity对象
+     * @return SecurityFilterChain对象
+     * @throws Exception 异常
+     */
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                // 1. 关闭 CSRF（开发环境）
+                .csrf(csrf -> csrf.disable())
+                // 2. 配置请求权限
+                .authorizeHttpRequests(auth -> auth
+                        // 放行所有请求，由AuthInterceptor处理权限校验
+                        .anyRequest().permitAll()
+                )
+                // 3. 保留表单登录（可选，不影响 Swagger 访问）
+                .formLogin(form -> form.permitAll())
+                // 4. 关键：排除 SpringDoc 接口的 Security 过滤器（避免拦截）
+                .securityMatcher("/api/**") // 仅对 /api/** 路径应用 Security 规则
+                .httpBasic(httpBasic -> {});
+
+        return http.build();
+    }
 }

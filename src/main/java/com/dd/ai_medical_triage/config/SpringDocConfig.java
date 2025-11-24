@@ -37,9 +37,9 @@ public class SpringDocConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Graygoo401 的个人网站 API 文档")
+                        .title("AI MEDICAL TRIAGE API 文档")
                         .version("v1")
-                        .description("包含用户管理、社区互动、商品交易、消息通知等模块接口")
+                        .description("包含用户管理、AI互动、患者分诊等模块接口")
                         // 联系人信息（可选）
                         .contact(new Contact()
                                 .name("Arrhenius401")

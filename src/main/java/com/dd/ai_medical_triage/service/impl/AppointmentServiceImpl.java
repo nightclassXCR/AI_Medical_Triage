@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 import static com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode.*;
@@ -67,7 +68,7 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
         appointment.setPatientId(req.getPatientId());
         appointment.setDoctorId(req.getDoctorId());
         appointment.setScheduleId(req.getScheduleId());
-        appointment.setAppointmentTime(req.getAppointmentTime());
+        appointment.setAppointmentTime(LocalDateTime.parse(req.getAppointmentTime()));
         appointment.setStatus(0); // 初始状态：待支付
 
         try {

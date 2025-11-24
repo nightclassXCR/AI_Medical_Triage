@@ -31,8 +31,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public DirectExchange appointmentExchange() {
-        return new DirectExchange(EXCHANGE);
+    public TopicExchange appointmentExchange() {
+        return new TopicExchange(EXCHANGE);
     }
 
     @Bean

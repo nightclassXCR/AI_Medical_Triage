@@ -10,7 +10,7 @@ import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.entity.MessageQueueLog;
 import com.dd.ai_medical_triage.exception.BusinessException;
-import com.dd.ai_medical_triage.mapper.MessageQueueLogMapper;
+import com.dd.ai_medical_triage.dao.mapper.MessageQueueLogMapper;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.service.base.MessageQueueLogService;
 import com.dd.ai_medical_triage.vo.ResultVO;

@@ -2,9 +2,12 @@ package com.dd.ai_medical_triage.dao.repository;
 
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.Message;
+import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public class RedisChatMemoryRepository implements ChatMemoryRepository {
 
     private final RedisChatMemoryRepositoryDialect dialect;
@@ -19,6 +22,7 @@ public class RedisChatMemoryRepository implements ChatMemoryRepository {
      *
      * @return 所有存在会话ID
      */
+    @NonNull
     @Override
     public List<String> findConversationIds() {
         return dialect.findConversationIds();
@@ -30,8 +34,9 @@ public class RedisChatMemoryRepository implements ChatMemoryRepository {
      * @param conversationId 会话ID
      * @return 该会话的所有消息列表
      */
+    @NonNull
     @Override
-    public List<Message> findByConversationId(String conversationId) {
+    public List<Message> findByConversationId(@NonNull String conversationId) {
         return dialect.findByConversationId(conversationId);
     }
 
@@ -42,7 +47,7 @@ public class RedisChatMemoryRepository implements ChatMemoryRepository {
      * @param messages       要保存的消息列表
      */
     @Override
-    public void saveAll(String conversationId, List<Message> messages) {
+    public void saveAll(@NonNull String conversationId, @NonNull List<Message> messages) {
         dialect.saveAll(conversationId, messages);
     }
 
@@ -52,7 +57,7 @@ public class RedisChatMemoryRepository implements ChatMemoryRepository {
      * @param conversationId 会话ID
      */
     @Override
-    public void deleteByConversationId(String conversationId) {
+    public void deleteByConversationId(@NonNull String conversationId) {
         dialect.deleteByConversationId(conversationId);
     }
 }

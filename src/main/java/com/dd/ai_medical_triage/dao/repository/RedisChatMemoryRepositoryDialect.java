@@ -27,7 +27,7 @@ public class RedisChatMemoryRepositoryDialect {
     private ObjectMapper objectMapper;
 
     // Redis里存所有活跃会话ID的Set key，方便查找所有会话
-    private static final String CACHE_SESSION_KEY = "chat:session_ids";
+    private static final String CACHE_CONVERSATION_KEY = "chat:conversation_ids";
     // 每个会话消息列表的key前缀
     private static final String CACHE_MESSAGE_LIST_PREFIX = "chat:messages:";
 
@@ -37,7 +37,7 @@ public class RedisChatMemoryRepositoryDialect {
      * 用于快速获取当前所有存在的会话ID
      */
     public List<String> findConversationIds() {
-        Set<Object> members = redisTemplate.opsForSet().members(CACHE_SESSION_KEY);
+        Set<Object> members = redisTemplate.opsForSet().members(CACHE_CONVERSATION_KEY);
         return Optional.ofNullable(members)
                 .filter(m -> !m.isEmpty())
                 .map(m -> m.stream().map(Object::toString).collect(Collectors.toList()))
@@ -79,7 +79,7 @@ public class RedisChatMemoryRepositoryDialect {
         if(CollectionUtils.isEmpty(messages)) return;
         String key=CACHE_MESSAGE_LIST_PREFIX+conversationId;
         deleteByConversationId(conversationId);
-        redisTemplate.opsForSet().add(CACHE_SESSION_KEY, conversationId);
+        redisTemplate.opsForSet().add(CACHE_CONVERSATION_KEY, conversationId);
         List<Message> filteredMessages = messages.stream()
                 .filter(Objects::nonNull)
                 .filter(m -> m.getText() != null && m.getMessageType() != null).toList();
@@ -105,11 +105,11 @@ public class RedisChatMemoryRepositoryDialect {
     public void deleteByConversationId(String conversationId) {
         String key = CACHE_MESSAGE_LIST_PREFIX + conversationId;
         redisTemplate.delete(key);
-        redisTemplate.opsForSet().remove(CACHE_SESSION_KEY, conversationId);
+        redisTemplate.opsForSet().remove(CACHE_CONVERSATION_KEY, conversationId);
     }
 
     /**
-     * 在saveall操作时统一添加系统时间
+     * 在saveAll操作时统一添加系统时间
      * @param jsonNode 待转换的 JsonNode
      * @param messageType 消息类型
      * @param textContent 消息内容

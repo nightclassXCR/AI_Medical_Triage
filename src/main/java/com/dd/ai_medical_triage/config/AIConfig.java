@@ -25,12 +25,6 @@ import static com.dd.ai_medical_triage.utils.constants.AIConstants.*;
 @Configuration
 public class AIConfig {
 
-    public final ChatMemory chatMemory;
-
-    public AIConfig(ChatMemory chatMemory) {
-        this.chatMemory = chatMemory;
-    }
-
     /**
      * 聊天记忆存储库（使用Redis）
      * @param dialect 使用的聊天存储库方言
@@ -69,7 +63,7 @@ public class AIConfig {
      * @return 聊天模型
      */
     @Bean
-    public ChatClient chatClient(OpenAiChatModel model) {
+    public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory) {
         return ChatClient
                 // 注入底层 Model
                 .builder(model)

@@ -316,6 +316,13 @@
             <artifactId>thymeleaf-spring6</artifactId>
         </dependency>
 
+        <!-- Hutool 工具库（包含 IdUtil） -->
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.8.25</version> <!-- 推荐稳定版本，适配大多数项目 -->
+        </dependency>
+
     </dependencies>
 
     <build>

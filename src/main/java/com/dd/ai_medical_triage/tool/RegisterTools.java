@@ -2,7 +2,6 @@ package com.dd.ai_medical_triage.tool;
 
 
 
-import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.vo.ResultVO;
@@ -22,9 +21,6 @@ public class RegisterTools {
     @Autowired
     private AppointmentService appointmentService;
 
-    /**
-     * 挂号功能
-     */
     @Tool(description = "当患者想要挂号的时候，使用这个方法进行挂号")
     public ResultVO appointmentFunction(AppointmentRequestDTO request) {
         try {

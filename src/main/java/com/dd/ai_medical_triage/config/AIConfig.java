@@ -1,5 +1,6 @@
 package com.dd.ai_medical_triage.config;
 
+import com.dd.ai_medical_triage.dao.repository.DoubleLayerChatMemoryRepository;
 import com.dd.ai_medical_triage.dao.repository.RedisChatMemoryRepository;
 import com.dd.ai_medical_triage.dao.repository.RedisChatMemoryRepositoryDialect;
 import com.dd.ai_medical_triage.tool.MedicalTools;
@@ -14,6 +15,7 @@ import org.springframework.ai.chat.memory.MessageWindowChatMemory;
 import org.springframework.ai.openai.OpenAiChatModel;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 import static com.dd.ai_medical_triage.utils.constants.AIConstants.*;
 
@@ -23,20 +25,24 @@ import static com.dd.ai_medical_triage.utils.constants.AIConstants.*;
 @Configuration
 public class AIConfig {
 
-    public final ChatMemory chatMemory;
-
-    public AIConfig(ChatMemory chatMemory) {
-        this.chatMemory = chatMemory;
-    }
-
     /**
      * 聊天记忆存储库（使用Redis）
      * @param dialect 使用的聊天存储库方言
      * @return 聊天存储库
      */
-    @Bean                               //参数在容器中自动获取，无需显式注入
-    public ChatMemoryRepository chatMemoryRepository(RedisChatMemoryRepositoryDialect dialect) {
+    @Bean("redisChatMemoryRepository")
+    public ChatMemoryRepository redisChatMemoryRepository(RedisChatMemoryRepositoryDialect dialect) {
         return new RedisChatMemoryRepository(dialect);
+    }
+
+    /**
+     * 聊天记忆存储库（使用MySQL+Redis双层架构）
+     * @return 聊天存储库
+     */
+    @Bean("doubleLayerChatMemoryRepository")
+    @Primary
+    public ChatMemoryRepository doubleLayerChatMemoryRepository() {
+        return new DoubleLayerChatMemoryRepository();
     }
 
     /**
@@ -57,7 +63,7 @@ public class AIConfig {
      * @return 聊天模型
      */
     @Bean
-    public ChatClient chatClient(OpenAiChatModel model) {
+    public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory) {
         return ChatClient
                 // 注入底层 Model
                 .builder(model)

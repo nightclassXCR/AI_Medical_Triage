@@ -2,6 +2,7 @@ package com.dd.ai_medical_triage.tool;
 
 
 
+import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.vo.ResultVO;

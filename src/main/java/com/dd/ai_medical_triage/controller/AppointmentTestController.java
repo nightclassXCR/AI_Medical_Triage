@@ -1,6 +1,6 @@
 package com.dd.ai_medical_triage.controller;
 
-import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
+import com.dd.ai_medical_triage.dto.appointment.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;

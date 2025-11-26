@@ -1,7 +1,7 @@
 package com.dd.ai_medical_triage.config;
 
 
-import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
+import com.dd.ai_medical_triage.dto.appointment.AppointmentRequestDTO;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;

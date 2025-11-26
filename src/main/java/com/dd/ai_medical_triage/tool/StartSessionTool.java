@@ -1,9 +1,9 @@
 package com.dd.ai_medical_triage.tool;
 
 
-import com.dd.ai_medical_triage.entity.Session;
+import com.dd.ai_medical_triage.entity.ChatSession;
 import com.dd.ai_medical_triage.enums.SimpleEnum.SessionStatusEnum;
-import com.dd.ai_medical_triage.service.base.SessionService;
+import com.dd.ai_medical_triage.service.base.ChatSessionService;
 import com.dd.ai_medical_triage.vo.ResultVO;
 import org.springframework.ai.tool.annotation.Tool;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 public class StartSessionTool {
 
     @Autowired
-    private SessionService sessionService;
+    private ChatSessionService chatSessionService;
 
     /**
      * 开始新的AI问诊会话
@@ -23,11 +23,11 @@ public class StartSessionTool {
      */
     @Tool(description = "开始新的AI问诊会话")
     public ResultVO<Boolean> startSession() {
-        Session session = new Session();
-        session.setPatientId(1L);
-        session.setStatus(SessionStatusEnum.started);
-        session.setCreatedTime(LocalDateTime.now());
-        return ResultVO.success(sessionService.save(session));
+        ChatSession chatSession = new ChatSession();
+        chatSession.setPatientId(1L);
+        chatSession.setStatus(SessionStatusEnum.STARTED);
+        chatSession.setCreatedTime(LocalDateTime.now());
+        return ResultVO.success(chatSessionService.save(chatSession));
     }
 
 

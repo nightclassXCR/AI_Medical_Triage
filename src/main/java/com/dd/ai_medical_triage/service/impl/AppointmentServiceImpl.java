@@ -6,7 +6,7 @@ import com.dd.ai_medical_triage.annatation.NoRepeatSubmit;
 import com.dd.ai_medical_triage.config.RabbitMQConfig;
 import com.dd.ai_medical_triage.dao.mapper.AppointmentMapper;
 import com.dd.ai_medical_triage.dao.mapper.ScheduleMapper;
-import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
+import com.dd.ai_medical_triage.dto.appointment.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.entity.MessageQueueLog;
 import com.dd.ai_medical_triage.exception.BusinessException;
@@ -23,7 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.UUID;
 
 import static com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode.*;
 

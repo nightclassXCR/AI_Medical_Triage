@@ -1,10 +1,8 @@
-package com.dd.ai_medical_triage.dto.tool;
+package com.dd.ai_medical_triage.dto.appointment;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-
-import java.util.List;
 
 @Data
 @Schema(description = "预约信息请求数据模型")

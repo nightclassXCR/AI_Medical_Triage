@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage.dto.tool;
+package com.dd.ai_medical_triage.dto.appointment;
 
 
 import lombok.Data;

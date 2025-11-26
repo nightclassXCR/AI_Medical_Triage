@@ -8,9 +8,9 @@ import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.entity.MessageQueueLog;
 import com.dd.ai_medical_triage.exception.BusinessException;
-import com.dd.ai_medical_triage.mapper.AppointmentMapper;
-import com.dd.ai_medical_triage.mapper.MessageQueueLogMapper;
-import com.dd.ai_medical_triage.mapper.ScheduleMapper;
+import com.dd.ai_medical_triage.dao.mapper.AppointmentMapper;
+import com.dd.ai_medical_triage.dao.mapper.MessageQueueLogMapper;
+import com.dd.ai_medical_triage.dao.mapper.ScheduleMapper;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.service.base.MessageQueueLogService;
 import com.dd.ai_medical_triage.vo.ResultVO;
@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.UUID;
 
 import static com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode.*;
@@ -77,7 +78,10 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
         appointment.setPatientId(req.getPatientId());
         appointment.setDoctorId(req.getDoctorId());
         appointment.setScheduleId(req.getScheduleId());
-        appointment.setAppointmentTime(LocalDateTime.parse(req.getAppointmentTime()));
+// 替换原来的 appointment.setAppointmentTime(LocalDateTime.parse(req.getAppointmentTime()));
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        appointment.setAppointmentTime(LocalDateTime.parse(req.getAppointmentTime(), formatter));
+
         appointment.setStatus(0); // 初始状态：待支付
 
         try {

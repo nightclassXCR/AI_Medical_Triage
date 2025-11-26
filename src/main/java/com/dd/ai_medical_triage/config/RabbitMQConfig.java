@@ -1,6 +1,7 @@
 package com.dd.ai_medical_triage.config;
 
 
+import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -21,7 +22,7 @@ public class RabbitMQConfig {
 
 
     @RabbitListener(queues = REGISTER_QUEUE)
-    public void receiveMessage(String message) {
+    public void receiveAppointmentMessage(AppointmentRequestDTO message) {
         System.out.println("Received message: " + message);
     }
 

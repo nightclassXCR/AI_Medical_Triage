@@ -1,4 +1,4 @@
-package com.dd.ai_medical_triage;
+package com.dd.ai_medical_triage.controller;
 
 import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.service.base.AppointmentService;

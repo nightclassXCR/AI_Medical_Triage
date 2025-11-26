@@ -4,26 +4,23 @@ package com.dd.ai_medical_triage.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.dd.ai_medical_triage.annatation.NoRepeatSubmit;
 import com.dd.ai_medical_triage.config.RabbitMQConfig;
+import com.dd.ai_medical_triage.dao.mapper.AppointmentMapper;
+import com.dd.ai_medical_triage.dao.mapper.ScheduleMapper;
 import com.dd.ai_medical_triage.dto.tool.AppointmentRequestDTO;
 import com.dd.ai_medical_triage.entity.Appointment;
 import com.dd.ai_medical_triage.entity.MessageQueueLog;
 import com.dd.ai_medical_triage.exception.BusinessException;
-import com.dd.ai_medical_triage.dao.mapper.AppointmentMapper;
 import com.dd.ai_medical_triage.dao.mapper.MessageQueueLogMapper;
-import com.dd.ai_medical_triage.dao.mapper.ScheduleMapper;
 import com.dd.ai_medical_triage.service.base.AppointmentService;
 import com.dd.ai_medical_triage.service.base.MessageQueueLogService;
 import com.dd.ai_medical_triage.vo.ResultVO;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.info.ProjectInfoProperties;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.UUID;

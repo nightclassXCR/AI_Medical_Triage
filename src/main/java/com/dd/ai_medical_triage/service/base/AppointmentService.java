@@ -12,5 +12,5 @@ public interface AppointmentService extends BaseService<Appointment>{
     public ResultVO register(AppointmentRequestDTO appointment);
 
 
-
+    boolean update(Appointment request);
 }

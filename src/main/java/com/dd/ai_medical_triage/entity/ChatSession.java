@@ -18,29 +18,25 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("session")
-public class Session {
-    /**
-     * 会话ID
-     * 对应文档4 session表：session_id（bigint AI PK）
-     */
-    @TableId(value = "session_id",type = IdType.AUTO)
+@TableName("chat_session")
+public class ChatSession {
+    /** 会话ID */
+    @TableId(value = "chat_session_id")
     @NotBlank(message = "会话ID不能为空")
-    private Long sessionId;
+    private String chatSessionId;
 
-    /**
-     * 患者ID
-     * 对应文档4 session表：patient_id（bigint）
-     */
-    private Long patientId;
-    /**
-     * 创建时间
-     * 对应文档4 session表：created_time（datetime）
-     */
+    /** 用户ID */
+    private Long userId;
+
+    /** 会话摘要（根据用户的第一个消息给出） */
+    private String summary;
+
+    /** 创建时间*/
     private LocalDateTime createdTime;
-    /**
-     * 会话状态
-     * 对应文档4 session表：status（tinyint）
-     */
+
+    /** 更新时间 */
+    private LocalDateTime updatedTime;
+
+    /** 会话状态 */
     private SessionStatusEnum status;
 }

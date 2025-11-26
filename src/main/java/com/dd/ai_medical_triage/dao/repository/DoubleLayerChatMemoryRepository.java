@@ -1,9 +1,10 @@
 package com.dd.ai_medical_triage.dao.repository;
 
 import cn.hutool.core.util.IdUtil;
-import com.dd.ai_medical_triage.dao.mapper.ChatMemoryMapper;
-import com.dd.ai_medical_triage.entity.ChatMemory;
-import com.dd.ai_medical_triage.enums.SimpleEnum.ChatMemoryTypeEnum;
+import com.dd.ai_medical_triage.dao.mapper.ChatMessageMapper;
+import com.dd.ai_medical_triage.dao.mapper.ChatSessionMapper;
+import com.dd.ai_medical_triage.entity.ChatMessage;
+import com.dd.ai_medical_triage.enums.SimpleEnum.ChatMessageTypeEnum;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,10 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
     private RedisChatMemoryRepositoryDialect redisDialect;
 
     @Autowired
-    private ChatMemoryMapper chatMemoryMapper;
+    private ChatMessageMapper chatMessageMapper;
+
+    @Autowired
+    private ChatSessionMapper chatSessionMapper;
 
     /**
      * 获取会话ID列表
@@ -40,7 +44,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
         if (!redisIds.isEmpty()) {
             return redisIds;
         }
-        List<String> mysqlIds = chatMemoryMapper.selectDistinctSessionIds();
+        List<String> mysqlIds = chatSessionMapper.selectDistinctSessionIds();
         // 同步到Redis
         mysqlIds.forEach(id -> redisDialect.saveAll(id, findByConversationId(id)));
         return mysqlIds;
@@ -60,7 +64,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
         }
 
         // 2. Redis未命中，查MySQL
-        List<ChatMemory> poList = chatMemoryMapper.selectBySessionId(conversationId);
+        List<ChatMessage> poList = chatMessageMapper.selectBySessionId(conversationId);
         if (poList.isEmpty()) {
             return List.of();
         }
@@ -83,10 +87,10 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
             return;
         }
         // 1. 先更新MySQL（持久化）
-        List<ChatMemory> poList = messages.stream()
+        List<ChatMessage> poList = messages.stream()
                 .map(msg -> convertToChatMemory(conversationId, msg))
                 .toList();
-        chatMemoryMapper.batchInsert(poList);
+        chatMessageMapper.batchInsert(poList);
 
         // 2. 再更新Redis（缓存）
         redisDialect.saveAll(conversationId, messages);
@@ -99,7 +103,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
     @Override
     public void deleteByConversationId(@NonNull String conversationId) {
         // 1. 先删除MySQL数据
-        chatMemoryMapper.deleteBySessionId(conversationId);
+        chatMessageMapper.deleteBySessionId(conversationId);
         // 2. 再删除Redis缓存
         redisDialect.deleteByConversationId(conversationId);
     }
@@ -107,7 +111,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
     /**
      * ChatMemory转Message
      */
-    private Message convertToMessage(ChatMemory memory) {
+    private Message convertToMessage(ChatMessage memory) {
         Map<String, Object> metadata = new HashMap<>();
         metadata.put("timestamp", memory.getCreatedTime().toString());
         // 其他元数据转换
@@ -128,12 +132,12 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
     }
 
     // Message转PO（适配数据库存储）
-    private ChatMemory convertToChatMemory(String conversationId, Message message) {
-        return ChatMemory.builder()
-                .chatMemoryId(IdUtil.getSnowflakeNextId()) // 雪花ID
-                .sessionId(conversationId)
+    private ChatMessage convertToChatMemory(String conversationId, Message message) {
+        return ChatMessage.builder()
+                .chatMessageId(IdUtil.getSnowflakeNextId()) // 雪花ID
+                .chatSessionId(conversationId)
                 .content(message.getText())
-                .messageType(ChatMemoryTypeEnum.fromValue(message.getMessageType().getValue()))
+                .messageType(ChatMessageTypeEnum.fromValue(message.getMessageType().getValue()))
                 .createdTime(LocalDateTime.now())
                 .build();
     }

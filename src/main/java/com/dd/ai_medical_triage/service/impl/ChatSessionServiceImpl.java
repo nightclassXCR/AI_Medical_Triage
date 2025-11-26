@@ -1,0 +1,125 @@
+package com.dd.ai_medical_triage.service.impl;
+
+import com.dd.ai_medical_triage.convert.ChatSessionConvert;
+import com.dd.ai_medical_triage.dao.mapper.UserMapper;
+import com.dd.ai_medical_triage.dto.PageResult;
+import com.dd.ai_medical_triage.dto.chat.ChatSessionDetailDTO;
+import com.dd.ai_medical_triage.dto.chat.ChatSessionListItem;
+import com.dd.ai_medical_triage.dto.chat.ChatSessionQueryDTO;
+import com.dd.ai_medical_triage.entity.ChatSession;
+import com.dd.ai_medical_triage.dao.mapper.ChatSessionMapper;
+import com.dd.ai_medical_triage.entity.User;
+import com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode;
+import com.dd.ai_medical_triage.exception.BusinessException;
+import com.dd.ai_medical_triage.service.base.ChatMessageService;
+import com.dd.ai_medical_triage.service.base.ChatSessionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * AI会话服务实现类
+ */
+@Service
+public class ChatSessionServiceImpl extends BaseServiceImpl<ChatSessionMapper, ChatSession> implements ChatSessionService {
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @Autowired
+    private ChatSessionMapper chatSessionMapper;
+
+    @Autowired
+    private ChatSessionConvert chatSessionConvert;
+
+    @Autowired
+    private ChatMessageService chatMessageService;
+
+    /**
+     * 创建会话ID
+     * @param prompt 提示语
+     * @param userId 用户ID
+     * @return 会话ID
+     */
+    @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
+    public String createSessionId(String prompt, Long userId) {
+        // 1. 校验用户
+        if(userMapper.selectById(userId) == null){
+            throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
+        }
+
+        // 2. 创建会话ID
+        String sessionId = UUID.randomUUID().toString();
+        while (chatSessionMapper.selectById(sessionId) != null){
+            sessionId = UUID.randomUUID().toString();
+        }
+
+        // 3. 插入用户第一条prompt
+        chatMessageService.insertFirstPrompt(sessionId, prompt);
+
+        return sessionId;
+    }
+
+    @Override
+    public ChatSessionDetailDTO selectSessionById(String sessionId, Long userId) {
+        // 1. 查询会话
+        ChatSession chatSession = chatSessionMapper.selectById(sessionId);
+        if (chatSession == null) {
+            throw new BusinessException(ErrorCode.CHAT_SESSION_NOT_EXISTS);
+        }
+
+        // 2. 检验用户权限
+        User user = userMapper.selectById(userId);
+        if (!user.isAdmin() && !userId.equals(chatSession.getUserId())) {
+            throw new BusinessException(ErrorCode.PERMISSION_DENIED);
+        }
+
+        // 3. 创建会话详情DTO
+        ChatSessionDetailDTO chatSessionDetailDTO = chatSessionConvert.chatSessionToChatSessionDetailDTO(chatSession);
+        chatSessionDetailDTO.setMessages(chatMessageService.getBySessionId(sessionId));
+
+        return chatSessionDetailDTO;
+    }
+
+    /**
+     * 查询会话列表数量
+     * @param queryDTO 查询参数
+     * @return 会话列表
+     */
+    @Override
+    public int countSessions(ChatSessionQueryDTO queryDTO) {
+        return chatSessionMapper.countByQuery(queryDTO);
+    }
+
+    /**
+     * 查询会话列表
+     * @param queryDTO 筛选参数
+     * @return 会话列表
+     */
+    @Override
+    public PageResult<ChatSessionListItem> querySessions(ChatSessionQueryDTO queryDTO) {
+        // 1. 查询总数和列表（匹配UserMapper.countByAllParam和selectByAllParam）
+        int pageNum = queryDTO.getPageNum() == null ? 1 : queryDTO.getPageNum();
+        int pageSize = queryDTO.getPageSize() == null ? 10 : queryDTO.getPageSize();
+        int offset = (pageNum - 1) * pageSize;
+        queryDTO.setOffset(offset);
+
+        long total = chatSessionMapper.countByQuery(queryDTO);
+        List<ChatSession> list = chatSessionMapper.selectByQuery(queryDTO);
+
+        // 2. 转换为ChatSessionDetailDTO列表
+        List<ChatSessionListItem> dtoList = list.stream()
+                .map(chatSessionConvert::chatSessionToChatSessionListItem)
+                .toList();
+
+        // 3. 封装PageResult
+        long totalPages = total % pageSize == 0 ? total / pageSize : total / pageSize + 1;
+        return new PageResult<ChatSessionListItem>(total, totalPages, dtoList, pageNum, pageSize);
+    }
+
+}

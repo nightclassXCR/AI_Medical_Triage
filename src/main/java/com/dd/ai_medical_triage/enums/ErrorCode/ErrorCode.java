@@ -117,7 +117,12 @@ public enum ErrorCode {
     // AI 模块
     AI_SERVICE_FAILS("AI_001", 500, "AI服务不可用"),
     AI_PARSE_FAILS("AI_002", 500, "AI服务前置解析失败"),
-    AI_CLEAR_CHAT_CONTENT_FAILS("AI_003", 500, "AI清理上下文"),;
+    AI_CLEAR_CHAT_CONTENT_FAILS("AI_003", 500, "AI清理上下文"),
+
+    CHAT_SESSION_NOT_EXISTS("CHAT_SESSION_001", 404, "会话不存在"),
+    CHAT_SESSION_FIRST_PROMPT_NULL("CHAT_SESSION_002", 400, "会话首次消息为空"),
+
+    CHAT_MESSAGE_NOT_EXISTS("CHAT_MESSAGE_001", 404, "聊天消息不存在"),;
 
     // HTTP状态码
     // 200：成功操作

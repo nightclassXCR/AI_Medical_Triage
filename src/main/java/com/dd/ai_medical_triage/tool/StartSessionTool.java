@@ -24,7 +24,7 @@ public class StartSessionTool {
     @Tool(description = "开始新的AI问诊会话")
     public ResultVO<Boolean> startSession() {
         ChatSession chatSession = new ChatSession();
-        chatSession.setPatientId(1L);
+        chatSession.setUserId(1L);
         chatSession.setStatus(SessionStatusEnum.STARTED);
         chatSession.setCreatedTime(LocalDateTime.now());
         return ResultVO.success(chatSessionService.save(chatSession));

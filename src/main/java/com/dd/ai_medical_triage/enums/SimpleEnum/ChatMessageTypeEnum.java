@@ -6,7 +6,7 @@ import org.springframework.ai.chat.messages.MessageType;
 /**
  * 自定义枚举适配器（适配 MyBatis-Plus 自动转换）
  */
-public enum ChatMemoryTypeEnum {
+public enum ChatMessageTypeEnum {
     USER(MessageType.USER),
     ASSISTANT(MessageType.ASSISTANT),
     SYSTEM(MessageType.SYSTEM),
@@ -18,7 +18,7 @@ public enum ChatMemoryTypeEnum {
     // 关联 Spring AI 的 MessageType
     private final MessageType aiMessageType;
 
-    ChatMemoryTypeEnum(MessageType aiMessageType) {
+    ChatMessageTypeEnum(MessageType aiMessageType) {
         this.value = aiMessageType.getValue();
         this.aiMessageType = aiMessageType;
     }
@@ -26,8 +26,8 @@ public enum ChatMemoryTypeEnum {
     /**
      * 数据库字符串 → 自定义枚举
      */
-    public static ChatMemoryTypeEnum fromValue(String value) {
-        for (ChatMemoryTypeEnum type : values()) {
+    public static ChatMessageTypeEnum fromValue(String value) {
+        for (ChatMessageTypeEnum type : values()) {
             if (type.value.equals(value)) {
                 return type;
             }

@@ -16,9 +16,10 @@ public class CodeCacheUtil {
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
 
-    // 缓存前缀：区分验证码业务（避免与其他Rediskey冲突）
-    private static final String CODE_PHONE_KEY_PREFIX = "code:phone";
-    private static final String CODE_EMAIL_KEY_PREFIX = "code:email";
+    public static final String CODE_PHONE_KEY_PREFIX = "code:phone:";
+    public static final String CODE_EMAIL_KEY_PREFIX = "code:email:";
+
+
 
     // 缓存有效期：5分钟
     private static final Duration CACHE_TTL_CODE = Duration.ofMinutes(5);

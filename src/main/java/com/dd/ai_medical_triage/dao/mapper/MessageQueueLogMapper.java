@@ -11,9 +11,8 @@ public interface MessageQueueLogMapper {
 
     /**
      * 插入消息队列日志
-     * @param messageQueueLog
-     * @return
      */
-    @Insert("insert into message_queue_log (event_type, payload, status, created_time) values (#{messageQueueLog.eventType}, #{messageQueueLog.payload}, #{messageQueueLog.status}, #{messageQueueLog.createdTime})")
+    @Insert("insert into message_queue_log (event_type, payload, status, created_time) values (#{eventType}, #{payload}, #{status}, #{createdTime})")
     int insert(MessageQueueLog messageQueueLog);
+
 }

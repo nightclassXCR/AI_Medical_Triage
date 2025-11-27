@@ -3,14 +3,16 @@ package com.dd.ai_medical_triage.dto.chat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * 会话 prompt
  */
+@NoArgsConstructor
 @Data
-@Builder
 @Schema(description = "会话提示信息数据模型")
 public class ChatPromptDTO {
 

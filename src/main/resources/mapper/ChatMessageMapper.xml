@@ -22,15 +22,15 @@
     <!-- 批量插入会话消息 -->
     <insert id="batchInsert" parameterType="java.util.List">
         INSERT INTO chat_message (
-        <include refid="Base_Column_List"/>
+        chat_session_id, message_type, content, create_time, update_time
         ) VALUES
         <foreach collection="list" item="item" separator=",">
             (
             #{item.chatSessionId},
             #{item.messageType},
             #{item.content},
-            #{item.createdTime},
-            #{item.messageType}
+            #{item.createTime},
+            #{item.updateTime}
             )
         </foreach>
     </insert>

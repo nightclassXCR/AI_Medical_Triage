@@ -31,10 +31,11 @@ public class RedisConfig {
      */
     @Bean("redisObjectMapper") // 命名以区分全局 ObjectMapper
     public ObjectMapper objectMapper() {
+
         ObjectMapper objectMapper = new ObjectMapper();
-        JavaTimeModule timeModule = new JavaTimeModule();
 
         // 1. 处理Java 8时间类型（LocalDateTime)
+        JavaTimeModule timeModule = new JavaTimeModule();
         // 自定义LocalDateTime序列化格式（如"yyyy-MM-dd HH:mm:ss"，符合业务习惯）
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         // 同时配置序列化器和反序列化器，确保格式一致
@@ -43,10 +44,19 @@ public class RedisConfig {
         // 注册时间模块到Jackson
         objectMapper.registerModule(timeModule);
 
-        // 2. 保留类型信息
+        // 2. 增强类型信息保留（关键：确保接口类型反序列化正确）
         objectMapper.activateDefaultTyping(
                 LaissezFaireSubTypeValidator.instance,
-                ObjectMapper.DefaultTyping.NON_FINAL  // 对非final类添加类型信息
+                ObjectMapper.DefaultTyping.NON_CONCRETE_AND_ARRAYS  // 对接口/抽象类也保留类型信息
+        );
+
+        // 3. 注册 Spring AI Message 相关类型（按需添加具体实现类）
+        objectMapper.registerSubtypes(
+                org.springframework.ai.chat.messages.UserMessage.class,
+                org.springframework.ai.chat.messages.AssistantMessage.class,
+                org.springframework.ai.chat.messages.SystemMessage.class
+                , org.springframework.ai.chat.messages.ToolResponseMessage.class
+                // 可根据实际使用的 Message 实现类继续添加
         );
 
         return objectMapper;

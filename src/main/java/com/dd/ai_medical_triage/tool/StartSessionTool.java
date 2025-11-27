@@ -26,7 +26,7 @@ public class StartSessionTool {
         ChatSession chatSession = new ChatSession();
         chatSession.setUserId(1L);
         chatSession.setStatus(SessionStatusEnum.STARTED);
-        chatSession.setCreatedTime(LocalDateTime.now());
+        chatSession.setCreateTime(LocalDateTime.now());
         return ResultVO.success(chatSessionService.save(chatSession));
     }
 

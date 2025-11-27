@@ -36,8 +36,8 @@ public class ChatMessage {
     private String content;
 
     /** 创建时间（数据库默认 CURRENT_TIMESTAMP，无需手动设置） */
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     /** 更新时间（用于同步Redis和MySQL,数据库默认 ON UPDATE CURRENT_TIMESTAMP，无需手动设置） */
-    private LocalDateTime updatedTime;
+    private LocalDateTime updateTime;
 }

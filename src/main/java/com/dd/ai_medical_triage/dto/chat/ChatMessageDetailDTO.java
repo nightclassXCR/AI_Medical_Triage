@@ -35,5 +35,5 @@ public class ChatMessageDetailDTO {
 
     /** 创建时间（数据库默认 CURRENT_TIMESTAMP，无需手动设置） */
     @Schema(description = "消息创建时间", example = "2023-10-01T10:15:00")
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 }

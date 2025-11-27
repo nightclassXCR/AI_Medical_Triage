@@ -49,8 +49,8 @@ public class ChatMessageServiceImpl extends BaseServiceImpl<ChatMessageMapper, C
         chatMessage.setChatSessionId(sessionId);
         chatMessage.setMessageType(ChatMessageTypeEnum.USER);
         chatMessage.setContent(prompt);
-        chatMessage.setCreatedTime(LocalDateTime.now());
-        chatMessage.setUpdatedTime(LocalDateTime.now());
+        chatMessage.setCreateTime(LocalDateTime.now());
+        chatMessage.setUpdateTime(LocalDateTime.now());
 
         // 2. 插入会话记录
         if(chatMessageMapper.insert(chatMessage) <= 0) {

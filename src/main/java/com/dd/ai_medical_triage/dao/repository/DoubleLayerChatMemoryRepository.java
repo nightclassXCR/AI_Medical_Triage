@@ -113,7 +113,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
      */
     private Message convertToMessage(ChatMessage memory) {
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("timestamp", memory.getCreatedTime().toString());
+        metadata.put("timestamp", memory.getCreateTime().toString());
         // 其他元数据转换
 
         return switch (memory.getMessageType()) {
@@ -140,7 +140,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
                 .chatSessionId(conversationId)
                 .content(message.getText())
                 .messageType(ChatMessageTypeEnum.fromValue(message.getMessageType().getValue()))
-                .createdTime(LocalDateTime.now())
+                .createTime(LocalDateTime.now())
                 .build();
     }
 }

@@ -37,11 +37,11 @@ public class ChatSessionDetailDTO {
 
     /** 创建时间*/
     @Schema(description = "会话创建时间", example = "2023-10-01T10:00:00")
-    private LocalDateTime createdTime;
+    private LocalDateTime createTime;
 
     /** 更新时间 */
     @Schema(description = "会话最后更新时间", example = "2023-10-01T10:30:00")
-    private LocalDateTime updatedTime;
+    private LocalDateTime updateTime;
 
     /** 会话状态 */
     @Schema(description = "会话状态（枚举）", example = "ACTIVE")

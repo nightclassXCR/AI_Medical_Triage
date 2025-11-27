@@ -23,7 +23,7 @@ public interface ChatMessageMapper extends BaseMapper<ChatMessage> {
     /**
      * 根据会话ID查询所有消息（按创建时间升序）
      */
-    @Select("SELECT * FROM chat_message WHERE chat_session_id = #{sessionId} ORDER BY created_time ASC")
+    @Select("SELECT * FROM chat_message WHERE chat_session_id = #{sessionId} ORDER BY create_time ASC")
     List<ChatMessage> selectBySessionId(@Param("sessionId") String sessionId);
 
     /**

@@ -32,7 +32,7 @@ public class PatientTools {
      * @param caseNumber   患者病历号
      * @return 患者信息
      */
-    @Tool(description = "记录患者的个人信息")
+    @Tool(description = "【患者信息录入工具】用于在首次挂号或建立档案时，严格记录患者的个人身份信息。该工具将返回完整的患者档案，包括自动生成的病历号（如果未提供）。")
     public ResultVO<?> recordPatientInfo(@ToolParam(description = "患者姓名") String patientName,
                                       @ToolParam(description = "患者年龄") String age,
                                       @ToolParam (description = "患者性别") String gender,

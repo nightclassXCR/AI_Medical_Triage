@@ -39,13 +39,16 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
     @NonNull
     @Override
     public List<String> findConversationIds() {
-        // 从Redis获取会话ID，若为空则从MySQL加载并同步到Redis
+        // 1. 从Redis获取会话ID
         List<String> redisIds = redisDialect.findConversationIds();
         if (!redisIds.isEmpty()) {
             return redisIds;
         }
+
+        // 2. 若为空则从MySQL加载并同步到Redis
         List<String> mysqlIds = chatSessionMapper.selectDistinctSessionIds();
-        // 同步到Redis
+
+        // 3. 同步到Redis
         mysqlIds.forEach(id -> redisDialect.saveAll(id, findByConversationId(id)));
         return mysqlIds;
     }
@@ -86,13 +89,14 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
         if (messages.isEmpty()) {
             return;
         }
-        // 1. 先更新MySQL（持久化）
+
+        // 1. 保存至 MySQL 数据库（持久化）
         List<ChatMessage> poList = messages.stream()
-                .map(msg -> convertToChatMemory(conversationId, msg))
+                .map(msg -> convertToChatMessage(conversationId, msg))
                 .toList();
         chatMessageMapper.batchInsert(poList);
 
-        // 2. 再更新Redis（缓存）
+        // 2. 再保存至 Redis 数据库（缓存）
         redisDialect.saveAll(conversationId, messages);
     }
 
@@ -109,32 +113,33 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
     }
 
     /**
-     * ChatMemory转Message
+     * ChatMessage转Message
      */
-    private Message convertToMessage(ChatMessage memory) {
+    private Message convertToMessage(ChatMessage message) {
+        // 1. 创建元数据
         Map<String, Object> metadata = new HashMap<>();
-        metadata.put("timestamp", memory.getCreateTime().toString());
-        // 其他元数据转换
+        metadata.put("timestamp", message.getCreateTime().toString());
 
-        return switch (memory.getMessageType()) {
+        // 2. 根据消息类型创建消息
+        return switch (message.getMessageType()) {
             case USER-> UserMessage.builder()
-                    .text(memory.getContent())
+                    .text(message.getContent())
                     .metadata(metadata)
                     .build();
-            case ASSISTANT -> new AssistantMessage(memory.getContent(), metadata);
+            case ASSISTANT -> new AssistantMessage(message.getContent(), metadata);
             case SYSTEM -> SystemMessage.builder()
-                    .text(memory.getContent())
+                    .text(message.getContent())
                     .metadata(metadata)
                     .build();
             case TOOL -> new ToolResponseMessage(List.of(), metadata);
-            default -> throw new IllegalArgumentException("未知消息类型: " + memory.getMessageType());
+            default -> throw new IllegalArgumentException("未知消息类型: " + message.getMessageType());
         };
     }
 
     /**
-     * Message转ChatMemory
+     * Message转ChatMessage
      */
-    private ChatMessage convertToChatMemory(String conversationId, Message message) {
+    private ChatMessage convertToChatMessage(String conversationId, Message message) {
         return ChatMessage.builder()
                 .chatMessageId(IdUtil.getSnowflakeNextId()) // 雪花ID
                 .chatSessionId(conversationId)

@@ -1,0 +1,31 @@
+package com.dd.ai_medical_triage.dto.chat;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
+import lombok.Data;
+
+/**
+ * 会话 prompt
+ */
+@Data
+@Builder
+@Schema(description = "会话提示信息数据模型")
+public class ChatPromptDTO {
+
+    /** 会话内容 */
+    @NotBlank(message = "会话内容不能为空")
+    @Schema(description = "用户输入的会话内容", example = "请告诉我感冒的常见症状")
+    private String prompt;
+
+    /** 会话ID */
+    @NotNull(message = "会话ID不能为空")
+    @Schema(description = "所属会话唯一标识", example = "SESSION123456")
+    private String chatSessionId;
+
+    /** 用户ID */
+    @NotNull(message = "用户ID不能为空")
+    @Schema(description = "用户唯一标识", example = "10001")
+    private String userId;
+}

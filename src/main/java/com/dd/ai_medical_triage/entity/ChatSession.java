@@ -11,8 +11,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 /**
- * 会话实体类
- * 对应数据库表：session
+ * AI 会话实体类
+ * 存储会话的基本信息
  */
 
 @Data

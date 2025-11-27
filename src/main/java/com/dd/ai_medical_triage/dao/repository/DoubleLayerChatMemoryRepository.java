@@ -131,7 +131,9 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
         };
     }
 
-    // Message转PO（适配数据库存储）
+    /**
+     * Message转ChatMemory
+     */
     private ChatMessage convertToChatMemory(String conversationId, Message message) {
         return ChatMessage.builder()
                 .chatMessageId(IdUtil.getSnowflakeNextId()) // 雪花ID

@@ -12,7 +12,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 /**
- * AI会话内存模块实体类
+ * AI 会话消息模块实体类
+ * 存储会话中的每条消息
  */
 @AllArgsConstructor
 @NoArgsConstructor

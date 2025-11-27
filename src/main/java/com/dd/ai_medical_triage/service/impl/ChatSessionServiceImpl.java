@@ -10,6 +10,7 @@ import com.dd.ai_medical_triage.entity.ChatSession;
 import com.dd.ai_medical_triage.dao.mapper.ChatSessionMapper;
 import com.dd.ai_medical_triage.entity.User;
 import com.dd.ai_medical_triage.enums.ErrorCode.ErrorCode;
+import com.dd.ai_medical_triage.enums.SimpleEnum.SessionStatusEnum;
 import com.dd.ai_medical_triage.exception.BusinessException;
 import com.dd.ai_medical_triage.service.base.ChatMessageService;
 import com.dd.ai_medical_triage.service.base.ChatSessionService;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,37 +42,70 @@ public class ChatSessionServiceImpl extends BaseServiceImpl<ChatSessionMapper, C
     private ChatMessageService chatMessageService;
 
     /**
-     * 创建会话ID
-     * @param prompt 提示语
+     * 创建会话ID（暂时不插入）
      * @param userId 用户ID
      * @return 会话ID
      */
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED, rollbackFor = Exception.class)
-    public String createSessionId(String prompt, Long userId) {
+    public String createSessionId(Long userId) {
         // 1. 校验用户
         if(userMapper.selectById(userId) == null){
             throw new BusinessException(ErrorCode.USER_NOT_EXISTS);
         }
 
         // 2. 创建会话ID
+        // 此处不需要锁，因为 UUID 在理论上是全局唯一的，其设计目标是确保在分布式系统中，无需这样协调就能生成不重复的标识符
         String sessionId = UUID.randomUUID().toString();
-        while (chatSessionMapper.selectById(sessionId) != null){
-            sessionId = UUID.randomUUID().toString();
-        }
 
-        // 3. 插入用户第一条prompt
-        chatMessageService.insertFirstPrompt(sessionId, prompt);
+        // 3. 创建会话记录实体
+        ChatSession chatSession = new ChatSession();
+        chatSession.setChatSessionId(sessionId);
+        chatSession.setUserId(userId);
+        chatSession.setStatus(SessionStatusEnum.STARTED);
+        chatSession.setCreatedTime(LocalDateTime.now());
+        chatSession.setUpdatedTime(LocalDateTime.now());
+        chatSession.setSummary(userId + " 的会话: " + sessionId);
+
+        // 4. 插入会话记录
+        int updateRows = chatSessionMapper.insert(chatSession);
+        if(updateRows <= 0) {
+            throw new BusinessException(ErrorCode.DATA_INSERT_FAILED);
+        }
 
         return sessionId;
     }
 
     @Override
+    public Boolean updateSessionSummary(String sessionId, String summary) {
+        // 1. 创建会话记录实体
+        ChatSession session = new ChatSession();
+        session.setChatSessionId(sessionId);
+        session.setSummary(summary); // 设置摘要（如用户第一条消息的摘要）
+        session.setUpdatedTime(LocalDateTime.now()); // 更新时间戳
+
+        // 2. 根据ID更新非空字段（MyBatis-Plus的更新方法）
+        int updateRows = chatSessionMapper.updateById(session);
+        if(updateRows <= 0) {
+            throw new BusinessException(ErrorCode.DATA_UPDATE_FAILED);
+        }
+
+        return true;
+    }
+
+    /**
+     * 查询会话详情
+     * @param sessionId 会话ID
+     * @param userId 用户ID
+     * @return 会话详情
+     */
+    @Override
+    @Transactional(isolation = Isolation.SERIALIZABLE, rollbackFor = Exception.class)
     public ChatSessionDetailDTO selectSessionById(String sessionId, Long userId) {
         // 1. 查询会话
         ChatSession chatSession = chatSessionMapper.selectById(sessionId);
         if (chatSession == null) {
-            throw new BusinessException(ErrorCode.CHAT_SESSION_NOT_EXISTS);
+            return null;
         }
 
         // 2. 检验用户权限

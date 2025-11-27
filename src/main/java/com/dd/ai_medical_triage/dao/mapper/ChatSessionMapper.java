@@ -5,6 +5,7 @@ import com.dd.ai_medical_triage.dto.chat.ChatSessionQueryDTO;
 import com.dd.ai_medical_triage.entity.ChatSession;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
 
@@ -13,6 +14,15 @@ import java.util.List;
  */
 @Mapper
 public interface ChatSessionMapper extends BaseMapper<ChatSession> {
+
+    /**
+     * 更新会话摘要
+     * @param sessionId 会话ID
+     * @param summary 摘要
+     * @return 影响行数
+     */
+    @Update("UPDATE chat_session SET summary = #{summary} WHERE chat_session_id = #{sessionId}")
+    int updateSummary(String sessionId, String summary);
 
     /**
      * 查询会话ID列表

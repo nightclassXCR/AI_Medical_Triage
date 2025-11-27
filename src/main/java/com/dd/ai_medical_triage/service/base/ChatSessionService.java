@@ -18,12 +18,19 @@ import java.util.List;
 public interface ChatSessionService extends BaseService<ChatSession>{
 
     /**
-     * 创建新的会话ID（用户需发送一段对话后，才能弃用该方法）
-     * @param prompt 提示语
+     * 创建新的会话ID
      * @param userId 用户ID
      * @return 会话记录列表
      */
-    String createSessionId(String prompt, Long userId);
+    String createSessionId(Long userId);
+
+    /**
+     * 更新会话摘要
+     * @param sessionId 会话ID
+     * @param summary 摘要
+     * @return 是否成功
+     */
+    Boolean updateSessionSummary(String sessionId, String summary);
 
     /**
      * 获取会话内容

@@ -8,11 +8,8 @@ public enum SessionStatusEnum {
     /** 会话已开始 */
     STARTED,
 
-    /** 会话已结束 */
-    FINISHED,
-
-    /** 会话已取消 */
-    CANCELLED,
+    /** 会话进行中 */
+    ACTIVE,
 
     /** 会话已关闭 */
     CLOSED,

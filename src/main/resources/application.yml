@@ -72,7 +72,7 @@ email:
     template: "email/code-template.html"  # HTML邮件模板路径（放在resources/templates下）
 
 # 日志配置
-logging:
-  level:
-    root: error
-    org.springframework.ai.chat.client: DEBUG
+#logging:
+#  level:
+#    root: error
+#    org.springframework.ai.chat.client: DEBUG

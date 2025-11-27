@@ -1,8 +1,8 @@
 package com.dd.ai_medical_triage.dao.repository;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonNode;
+import cn.hutool.core.util.IdUtil;
+import com.dd.ai_medical_triage.entity.ChatMessage;
+import com.dd.ai_medical_triage.enums.SimpleEnum.ChatMessageTypeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.*;
@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -82,7 +82,7 @@ public class RedisChatMemoryRepositoryDialect {
 
         // 4. 反序列化消息列表
         return messageObjects.stream()
-                .map(this::convertToMessage)
+                .map(this::objectToMessage)
                 .filter(Objects::nonNull) // 过滤转换失败的消息
                 .collect(Collectors.toList());
     }
@@ -105,10 +105,10 @@ public class RedisChatMemoryRepositoryDialect {
         redisTemplate.expire(CACHE_CONVERSATION_KEY, CACHE_TTL_CONVERSATION);
 
         // 4. 处理消息（过滤无效消息并添加时间戳）
-        List<Message> validMessages = messages.stream()
+        List<ChatMessage> validMessages = messages.stream()
                 .filter(Objects::nonNull)
                 .filter(m -> m.getText() != null && m.getMessageType() != null)
-                .map(this::addTimestampToMessage) // 提取为独立方法
+                .map(message -> messageToChatMessage(conversationId, message)) // 提取为独立方法
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
@@ -144,69 +144,61 @@ public class RedisChatMemoryRepositoryDialect {
         return CACHE_MESSAGE_LIST_PREFIX + conversationId;
     }
 
-    /**
-     * 给消息添加时间戳元数据
-     */
-    private Message addTimestampToMessage(Message message) {
+    private Message objectToMessage(Object object) {
         try {
-            String json = objectMapper.writeValueAsString(message);
-            JsonNode jsonNode = objectMapper.readTree(json);
+            ChatMessage chatMessage;
 
-            Map<String, Object> metadata = Optional.ofNullable(jsonNode.get("metadata"))
-                    .map(node -> objectMapper.convertValue(node, new TypeReference<Map<String, Object>>() {}))
-                    .orElse(new HashMap<>());
+            // 处理两种情况：直接的DTO对象或需要从JSON转换的情况
+            if (object instanceof ChatMessage) {
+                chatMessage = (ChatMessage) object;
+            } else {
+                String json = objectMapper.writeValueAsString(object);
+                chatMessage = objectMapper.readValue(json, ChatMessage.class);
+            }
 
-            // 只在没有时间戳时添加
-            metadata.putIfAbsent("timestamp", Instant.now().toString());
-
-            // 根据消息类型构建带时间戳的消息
-            return switch (message.getMessageType()) {
-                case ASSISTANT -> new AssistantMessage(message.getText(), metadata);
-                case USER -> UserMessage.builder().text(message.getText()).metadata(metadata).build();
-                case SYSTEM -> SystemMessage.builder().text(message.getText()).metadata(metadata).build();
-                case TOOL -> new ToolResponseMessage(List.of(), metadata);
-            };
-        } catch (JsonProcessingException e) {
-            log.error("处理消息时发生序列化错误，消息内容: {}", message, e);
+            return chatMessageToMessage(chatMessage);
+        } catch (Exception e) {
+            log.error("从DTO转换为Message失败，对象: {}", object, e);
             return null;
         }
     }
 
     /**
-     * 将Redis中的对象转换为Message实例
+     * ChatMessage转Message
      */
-    private Message convertToMessage(Object object) {
-        try {
-            String json = objectMapper.writeValueAsString(object);
-            JsonNode jsonNode = objectMapper.readTree(json);
+    private Message chatMessageToMessage(ChatMessage message) {
+        // 1. 创建元数据
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("timestamp", message.getCreateTime().toString());
 
-            String type = Optional.ofNullable(jsonNode.get("messageType"))
-                    .map(JsonNode::asText)
-                    .orElse(MessageType.USER.getValue());
+        // 2. 根据消息类型创建消息
+        return switch (message.getMessageType()) {
+            case USER-> UserMessage.builder()
+                    .text(message.getContent())
+                    .metadata(metadata)
+                    .build();
+            case ASSISTANT -> new AssistantMessage(message.getContent(), metadata);
+            case SYSTEM -> SystemMessage.builder()
+                    .text(message.getContent())
+                    .metadata(metadata)
+                    .build();
+            case TOOL -> new ToolResponseMessage(List.of(), metadata);
+            default -> throw new IllegalArgumentException("未知消息类型: " + message.getMessageType());
+        };
+    }
 
-            MessageType messageType = MessageType.valueOf(type.toUpperCase());
-            String textContent = Optional.ofNullable(jsonNode.get("text"))
-                    .map(JsonNode::asText)
-                    .orElseGet(() ->
-                            (messageType == MessageType.SYSTEM || messageType == MessageType.USER) ? "" : null
-                    );
-
-            Map<String, Object> metadata = Optional.ofNullable(jsonNode.get("metadata"))
-                    .map(node -> objectMapper.convertValue(node, new TypeReference<Map<String, Object>>() {}))
-                    .orElse(new HashMap<>());
-
-            metadata.putIfAbsent("timestamp", Instant.now().toString());
-
-            return switch (messageType) {
-                case ASSISTANT -> new AssistantMessage(Objects.requireNonNullElse(textContent, ""), metadata);
-                case USER -> UserMessage.builder().text(textContent).metadata(metadata).build();
-                case SYSTEM -> SystemMessage.builder().text(textContent).metadata(metadata).build();
-                case TOOL -> new ToolResponseMessage(List.of(), metadata);
-            };
-        } catch (Exception e) { // 捕获所有异常，避免单个消息处理失败影响整体
-            log.error("反序列化消息失败，对象: {}", object, e);
-            return null;
-        }
+    /**
+     * Message转ChatMessage
+     */
+    private ChatMessage messageToChatMessage(String conversationId, Message message) {
+        return ChatMessage.builder()
+                .chatMessageId(IdUtil.getSnowflakeNextId()) // 雪花ID
+                .chatSessionId(conversationId)
+                .content(message.getText())
+                .messageType(ChatMessageTypeEnum.fromValue(message.getMessageType().getValue()))
+                .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
+                .build();
     }
 }
 

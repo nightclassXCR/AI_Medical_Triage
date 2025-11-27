@@ -110,8 +110,12 @@ public class AppointmentServiceImpl extends BaseServiceImpl<AppointmentMapper, A
         return ResultVO.success("挂号锁定成功！请提示用户尽快支付。订单ID：" + appointment.getAppointmentId());
     }
 
-
-
+    @Override
+    public boolean update(Appointment request) {
+        request.setStatus(1);
+        boolean update =this.updateById(request);
+        return update;
+    }
 
 
 }

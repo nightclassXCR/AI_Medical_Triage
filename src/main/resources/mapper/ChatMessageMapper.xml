@@ -12,14 +12,17 @@
         <result column="update_time" property="updateTime"/>
     </resultMap>
 
+    <!-- 基础字段SQL片段，减少冗余 -->
+    <sql id="Base_Column_List">
+        chat_message_id, chat_session_id, message_type, content, create_time, update_time
+    </sql>
+
+    <!-- ==================== SQL 语句 ==================== -->
+
     <!-- 批量插入会话消息 -->
     <insert id="batchInsert" parameterType="java.util.List">
         INSERT INTO chat_message (
-        chat_session_id,
-        message_type,
-        content,
-        created_time,
-        message_type
+        <include refid="Base_Column_List"/>
         ) VALUES
         <foreach collection="list" item="item" separator=",">
             (

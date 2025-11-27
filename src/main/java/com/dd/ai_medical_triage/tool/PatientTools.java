@@ -32,15 +32,16 @@ public class PatientTools {
      * @param caseNumber   患者病历号
      * @return 患者信息
      */
-    @Tool(description = "【患者信息录入工具】用于在首次挂号或建立档案时，严格记录患者的个人身份信息。该工具将返回完整的患者档案，包括自动生成的病历号（如果未提供）。")
-    public ResultVO<?> recordPatientInfo(@ToolParam(description = "患者姓名") String patientName,
-                                      @ToolParam(description = "患者年龄") String age,
-                                      @ToolParam (description = "患者性别") String gender,
-                                      @ToolParam (description = "患者电话号码") String phoneNumber,
-                                      @ToolParam (description = "患者身份证号") String idCard,
-                                      @ToolParam (description = "患者身高") String height,
-                                      @ToolParam (description = "患者体重") String weight,
-                                      @ToolParam (description = "患者病历号（如果没有可以先不记录，会自动生成一个病历号，生成之后告诉病人）") String caseNumber) {
+    @Tool(description = "【患者档案创建与病历号生成工具】**如果患者是首次就诊或没有病历号，必须调用此工具**。该工具用于收集患者基本信息并**创建新的患者档案**。成功调用后，系统将自动生成一个唯一的病历号，必须将此新病历号告知患者。")
+    public ResultVO<?> recordPatientInfo(
+            @ToolParam(description = "患者的**全名**，不能为空。") String patientName,
+            @ToolParam(description = "患者的**年龄**，请尝试获取整数值。") String age,
+            @ToolParam (description = "患者的**性别**，必须为明确的字符串（例如 MALE, FEMALE）。") String gender,
+            @ToolParam (description = "患者的**电话号码**，用于联系。") String phoneNumber,
+            @ToolParam (description = "患者的**身份证号**，可选。") String idCard,
+            @ToolParam (description = "患者的**身高**，可选（例如：175cm）。") String height,
+            @ToolParam (description = "患者的**体重**，可选（例如：65kg）。") String weight,
+            @ToolParam (description = "【可选/忽略】患者的病历号。**如果患者没有提供，请忽略此参数（留空）**，系统将自动生成病历号。") String caseNumber) {
         if (StringUtils.isBlank(patientName)) {
             return ResultVO.fail("患者姓名不能为空");
         }

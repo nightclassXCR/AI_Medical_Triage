@@ -63,7 +63,13 @@ public class AIConfig {
      * @return 聊天模型
      */
     @Bean
-    public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory) {
+    public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory,PatientTools patientTools,
+                                 MedicalTools medicalTools,
+                                 SymptomExtractTool symptomExtractTool,
+                                 RegisterTools registerTools // 你的挂号工具
+                                  ) {
+
+
         return ChatClient
                 // 注入底层 Model
                 .builder(model)
@@ -75,7 +81,7 @@ public class AIConfig {
                 // 默认顾问
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 // 默认注册工具
-                .defaultTools(new PatientTools(), new MedicalTools(), new SymptomExtractTool(),new RegisterTools())
+                .defaultTools(medicalTools, symptomExtractTool,registerTools)
                 .build();
 
     }

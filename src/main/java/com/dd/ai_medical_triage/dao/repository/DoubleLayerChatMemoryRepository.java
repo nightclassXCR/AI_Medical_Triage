@@ -141,6 +141,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
                 .content(message.getText())
                 .messageType(ChatMessageTypeEnum.fromValue(message.getMessageType().getValue()))
                 .createTime(LocalDateTime.now())
+                .updateTime(LocalDateTime.now())
                 .build();
     }
 }

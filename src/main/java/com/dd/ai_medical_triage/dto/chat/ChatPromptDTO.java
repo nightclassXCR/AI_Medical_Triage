@@ -27,7 +27,7 @@ public class ChatPromptDTO {
     private String chatSessionId;
 
     /** 用户ID */
-    @NotNull(message = "用户ID不能为空")
-    @Schema(description = "用户唯一标识", example = "10001")
+//    @NotNull(message = "用户ID不能为空")
+//    @Schema(description = "用户唯一标识", example = "10001")
     private String userId;
 }

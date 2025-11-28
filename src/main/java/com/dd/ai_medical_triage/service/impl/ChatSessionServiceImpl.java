@@ -14,6 +14,14 @@ import com.dd.ai_medical_triage.enums.SimpleEnum.SessionStatusEnum;
 import com.dd.ai_medical_triage.exception.BusinessException;
 import com.dd.ai_medical_triage.service.base.ChatMessageService;
 import com.dd.ai_medical_triage.service.base.ChatSessionService;
+
+// ===== 新增的 imports（用于 ChatMessageDTO 和时间转换）=====
+import com.dd.ai_medical_triage.dto.chat.ChatMessageDTO;
+import com.dd.ai_medical_triage.dto.chat.ChatMessageDetailDTO;
+import java.time.ZoneId;
+import java.util.stream.Collectors;
+// =========================================================
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -116,9 +124,55 @@ public class ChatSessionServiceImpl extends BaseServiceImpl<ChatSessionMapper, C
 
         // 3. 创建会话详情DTO
         ChatSessionDetailDTO chatSessionDetailDTO = chatSessionConvert.chatSessionToChatSessionDetailDTO(chatSession);
-        chatSessionDetailDTO.setMessages(chatMessageService.getBySessionId(sessionId));
+
+        // 4. 获取原始消息（List<ChatMessageDetailDTO>）
+        List<ChatMessageDetailDTO> rawMessages = chatMessageService.getBySessionId(sessionId);
+
+        // 5. 转换为前端专用 DTO（List<ChatMessageDTO>）
+        List<ChatMessageDTO> frontendMessages = rawMessages.stream()
+                .map(this::convertToChatMessageDTO)
+                .collect(Collectors.toList());
+
+        // 6. 设置转换后的消息
+        chatSessionDetailDTO.setMessages(frontendMessages);
 
         return chatSessionDetailDTO;
+    }
+
+    /**
+     * 将内部 ChatMessageDetailDTO 转换为前端所需的 ChatMessageDTO
+     */
+    private ChatMessageDTO convertToChatMessageDTO(ChatMessageDetailDTO source) {
+        ChatMessageDTO dto = new ChatMessageDTO();
+
+        // 角色映射：USER/ASSISTANT → user/assistant
+        if (source.getMessageType() != null) {
+            switch (source.getMessageType()) {
+                case USER:
+                    dto.setRole("user");
+                    break;
+                case ASSISTANT:
+                    dto.setRole("assistant");
+                    break;
+                default:
+                    dto.setRole("unknown");
+            }
+        }
+
+        dto.setContent(source.getContent());
+
+        // 时间戳转换：LocalDateTime → 秒级时间戳
+        if (source.getCreateTime() != null) {
+            long timestamp = source.getCreateTime()
+                    .atZone(ZoneId.systemDefault())
+                    .toEpochSecond();
+            dto.setTimestamp(timestamp);
+        }
+
+        // 注意：ChatMessageDetailDTO 没有 id 字段，所以 dto.id 保持 null
+        // 如果后续需要，可在 ChatMessageDetailDTO 中添加 id 并在此设置
+
+        return dto;
     }
 
     /**

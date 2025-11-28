@@ -3,10 +3,7 @@ package com.dd.ai_medical_triage.config;
 import com.dd.ai_medical_triage.dao.repository.DoubleLayerChatMemoryRepository;
 import com.dd.ai_medical_triage.dao.repository.RedisChatMemoryRepository;
 import com.dd.ai_medical_triage.dao.repository.RedisChatMemoryRepositoryDialect;
-import com.dd.ai_medical_triage.tool.MedicalTools;
-import com.dd.ai_medical_triage.tool.PatientTools;
-import com.dd.ai_medical_triage.tool.RegisterTools;
-import com.dd.ai_medical_triage.tool.SymptomExtractTool;
+import com.dd.ai_medical_triage.tool.*;
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.client.advisor.MessageChatMemoryAdvisor;
 import org.springframework.ai.chat.memory.ChatMemory;
@@ -63,7 +60,9 @@ public class AIConfig {
      * @return 聊天模型
      */
     @Bean
-    public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory,PatientTools patientTools,
+    public ChatClient chatClient(OpenAiChatModel model, ChatMemory chatMemory,
+                                 PatientTools patientTools,
+                                 DateTimeTools dateTimeTools,
                                  MedicalTools medicalTools,
                                  SymptomExtractTool symptomExtractTool,
                                  RegisterTools registerTools // 你的挂号工具
@@ -81,7 +80,7 @@ public class AIConfig {
                 // 默认顾问
                 .defaultAdvisors(MessageChatMemoryAdvisor.builder(chatMemory).build())
                 // 默认注册工具
-                .defaultTools(medicalTools, symptomExtractTool,registerTools)
+                .defaultTools(dateTimeTools,patientTools,medicalTools, symptomExtractTool,registerTools)
                 .build();
 
     }

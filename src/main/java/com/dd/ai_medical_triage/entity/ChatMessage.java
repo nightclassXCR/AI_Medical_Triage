@@ -22,9 +22,9 @@ import java.time.LocalDateTime;
 @TableName("chat_message")
 public class ChatMessage {
 
-    /** 主键ID（自增） */
-    @TableId(type = IdType.AUTO)  // 主键策略：自增
-    private Long chatMessageId;
+    /** 主键ID */
+    @TableId(value = "chat_message_id")
+    private String chatMessageId;
 
     /** 会话ID */
     private String chatSessionId;

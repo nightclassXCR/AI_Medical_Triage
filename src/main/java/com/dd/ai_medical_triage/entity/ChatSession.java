@@ -19,9 +19,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @TableName("chat_session")
 public class ChatSession {
+
     /** 会话ID */
     @TableId(value = "chat_session_id")
-    @NotBlank(message = "会话ID不能为空")
     private String chatSessionId;
 
     /** 用户ID */

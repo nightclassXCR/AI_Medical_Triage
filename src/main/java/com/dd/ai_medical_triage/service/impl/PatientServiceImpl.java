@@ -8,4 +8,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PatientServiceImpl extends BaseServiceImpl<PatientMapper, Patient> implements PatientService {
+
+    @Override
+    public Patient getByName(String name){
+        return baseMapper.getByName(name);
+    }
 }

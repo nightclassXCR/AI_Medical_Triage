@@ -11,6 +11,9 @@ import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
+
+import static com.dd.ai_medical_triage.utils.constants.ChatConstants.CHAT_MESSAGE_ID_PREFIX;
 
 /**
  * 消息转换工具类：负责 ChatMessage 与 Spring AI Message 的相互转换
@@ -107,5 +110,28 @@ public class SpringAiMessageConvert {
 
         // 2. 填充元数据
         return parseMetadata(chatMessage, message.getMetadata());
+    }
+
+    public static List<ChatMessage> fillBlankChatMessage(List<ChatMessage> chatMessageList) {
+        // 1. 确保消息列表不为空
+        if (chatMessageList == null || chatMessageList.isEmpty()) {
+            return chatMessageList;
+        }
+
+        // 2. 筛选出新生成的 Message 实体列表后，填充缺失的字段数据
+        List<ChatMessage> newMessageList = chatMessageList.stream()
+                .filter(msg -> msg.getChatMessageId() == null)
+                .map(msg -> {
+                    msg.setChatMessageId(createMessageId());
+                    msg.setCreateTime(LocalDateTime.now());
+                    msg.setUpdateTime(LocalDateTime.now());
+                    return msg;
+                })
+                .toList();
+        return newMessageList;
+    }
+
+    private static String createMessageId() {
+        return CHAT_MESSAGE_ID_PREFIX + UUID.randomUUID().toString();
     }
 }

@@ -1,8 +1,6 @@
 package com.dd.ai_medical_triage.dao.repository;
 
-import cn.hutool.core.util.IdUtil;
 import com.dd.ai_medical_triage.entity.ChatMessage;
-import com.dd.ai_medical_triage.enums.SimpleEnum.ChatMessageTypeEnum;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.messages.*;
@@ -12,9 +10,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.dd.ai_medical_triage.convert.SpringAiMessageConvert.chatMessageToMessage;
+import static com.dd.ai_medical_triage.convert.SpringAiMessageConvert.messageToChatMessage;
 
 @Slf4j
 @Component
@@ -64,7 +64,7 @@ public class RedisChatMemoryRepositoryDialect {
      */
     public List<Message> findByConversationId(String conversationId) {
         // 1. 拼接消息列表的key
-        String key = CACHE_MESSAGE_LIST_PREFIX + conversationId;
+        String key = getMessageKey(conversationId);
         Long size = redisTemplate.opsForList().size(key);
         if(size == null || size == 0L){
             return Collections.emptyList();
@@ -161,44 +161,6 @@ public class RedisChatMemoryRepositoryDialect {
             log.error("从DTO转换为Message失败，对象: {}", object, e);
             return null;
         }
-    }
-
-    /**
-     * ChatMessage转Message
-     */
-    private Message chatMessageToMessage(ChatMessage message) {
-        // 1. 创建元数据
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("timestamp", message.getCreateTime().toString());
-
-        // 2. 根据消息类型创建消息
-        return switch (message.getMessageType()) {
-            case USER-> UserMessage.builder()
-                    .text(message.getContent())
-                    .metadata(metadata)
-                    .build();
-            case ASSISTANT -> new AssistantMessage(message.getContent(), metadata);
-            case SYSTEM -> SystemMessage.builder()
-                    .text(message.getContent())
-                    .metadata(metadata)
-                    .build();
-            case TOOL -> new ToolResponseMessage(List.of(), metadata);
-            default -> throw new IllegalArgumentException("未知消息类型: " + message.getMessageType());
-        };
-    }
-
-    /**
-     * Message转ChatMessage
-     */
-    private ChatMessage messageToChatMessage(String conversationId, Message message) {
-        return ChatMessage.builder()
-                .chatMessageId(IdUtil.getSnowflakeNextId()) // 雪花ID
-                .chatSessionId(conversationId)
-                .content(message.getText())
-                .messageType(ChatMessageTypeEnum.fromValue(message.getMessageType().getValue()))
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
     }
 }
 

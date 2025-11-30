@@ -1,6 +1,5 @@
 package com.dd.ai_medical_triage.dto.chat;
 
-import com.dd.ai_medical_triage.dto.chat.ChatMessageDTO;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.dd.ai_medical_triage.enums.SimpleEnum.SessionStatusEnum;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -50,5 +49,5 @@ public class ChatSessionDetailDTO {
 
     /** 会话消息列表 */
     @Schema(description = "会话包含的消息列表")
-    private List<ChatMessageDTO> messages;
+    private List<ChatMessageDetailDTO> messages;
 }

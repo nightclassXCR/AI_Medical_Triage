@@ -1,20 +1,15 @@
 package com.dd.ai_medical_triage.dao.repository;
 
-import cn.hutool.core.util.IdUtil;
+import com.dd.ai_medical_triage.convert.SpringAiMessageConvert;
 import com.dd.ai_medical_triage.dao.mapper.ChatMessageMapper;
-import com.dd.ai_medical_triage.dao.mapper.ChatSessionMapper;
 import com.dd.ai_medical_triage.entity.ChatMessage;
-import com.dd.ai_medical_triage.enums.SimpleEnum.ChatMessageTypeEnum;
 import org.springframework.ai.chat.memory.ChatMemoryRepository;
 import org.springframework.ai.chat.messages.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * MySQL + Redis 双层缓存实现的会话记忆仓库
@@ -28,9 +23,6 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
 
     @Autowired
     private ChatMessageMapper chatMessageMapper;
-
-    @Autowired
-    private ChatSessionMapper chatSessionMapper;
 
     /**
      * 获取会话ID列表
@@ -46,7 +38,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
         }
 
         // 2. 若为空则从MySQL加载并同步到Redis
-        List<String> mysqlIds = chatSessionMapper.selectDistinctSessionIds();
+        List<String> mysqlIds = chatMessageMapper.selectDistinctSessionIds();
 
         // 3. 同步到Redis
         mysqlIds.forEach(id -> redisDialect.saveAll(id, findByConversationId(id)));
@@ -74,7 +66,7 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
 
         // 3. 转换为Message并同步到Redis
         List<Message> messages = poList.stream()
-                .map(this::convertToMessage)
+                .map(SpringAiMessageConvert::chatMessageToMessage)
                 .toList();
         redisDialect.saveAll(conversationId, messages);
         return messages;
@@ -86,15 +78,19 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
      */
     @Override
     public void saveAll(@NonNull String conversationId, @NonNull List<Message> messages) {
+        // 1. 确保消息列表不为空
         if (messages.isEmpty()) {
             return;
         }
 
-        // 1. 保存至 MySQL 数据库（持久化）
-        List<ChatMessage> poList = messages.stream()
-                .map(msg -> convertToChatMessage(conversationId, msg))
+        // 2. 数据类型转换，将 Message 转换为 ChatMessage
+        List<ChatMessage> chatMessageList = messages.stream()
+                .map(msg -> SpringAiMessageConvert.messageToChatMessage(conversationId, msg))
                 .toList();
-        chatMessageMapper.batchInsert(poList);
+
+        // 3. 过滤出新产生的message，将它们插入数据库
+        List<ChatMessage> newMessageList = SpringAiMessageConvert.fillBlankChatMessage(chatMessageList);
+        chatMessageMapper.batchInsert(newMessageList);
 
         // 2. 再保存至 Redis 数据库（缓存）
         redisDialect.saveAll(conversationId, messages);
@@ -112,41 +108,4 @@ public class DoubleLayerChatMemoryRepository implements ChatMemoryRepository {
         redisDialect.deleteByConversationId(conversationId);
     }
 
-    /**
-     * ChatMessage转Message
-     */
-    private Message convertToMessage(ChatMessage message) {
-        // 1. 创建元数据
-        Map<String, Object> metadata = new HashMap<>();
-        metadata.put("timestamp", message.getCreateTime().toString());
-
-        // 2. 根据消息类型创建消息
-        return switch (message.getMessageType()) {
-            case USER-> UserMessage.builder()
-                    .text(message.getContent())
-                    .metadata(metadata)
-                    .build();
-            case ASSISTANT -> new AssistantMessage(message.getContent(), metadata);
-            case SYSTEM -> SystemMessage.builder()
-                    .text(message.getContent())
-                    .metadata(metadata)
-                    .build();
-            case TOOL -> new ToolResponseMessage(List.of(), metadata);
-            default -> throw new IllegalArgumentException("未知消息类型: " + message.getMessageType());
-        };
-    }
-
-    /**
-     * Message转ChatMessage
-     */
-    private ChatMessage convertToChatMessage(String conversationId, Message message) {
-        return ChatMessage.builder()
-                .chatMessageId(IdUtil.getSnowflakeNextId()) // 雪花ID
-                .chatSessionId(conversationId)
-                .content(message.getText())
-                .messageType(ChatMessageTypeEnum.fromValue(message.getMessageType().getValue()))
-                .createTime(LocalDateTime.now())
-                .updateTime(LocalDateTime.now())
-                .build();
-    }
 }
